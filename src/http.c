@@ -221,6 +221,7 @@ int s;
 
 static char *format_get = "\
 GET %s HTTP/1.0\n\
+Host: %s\n\
 User-Agent: %s\n\
 Accept: */*\n\
 %s\
@@ -229,6 +230,7 @@ Accept: */*\n\
 
 static char *format_get2 = "\
 GET %s?%s HTTP/1.0\n\
+Host: %s\n\
 User-Agent: %s\n\
 Accept: */*\n\
 %s\
@@ -237,6 +239,7 @@ Accept: */*\n\
 
 static char *format_post = "\
 POST %s HTTP/1.0\n\
+Host: %s\n\
 User-Agent: %s\n\
 Accept: */*\n\
 Content-length: %d\n\
@@ -249,6 +252,7 @@ Content-type: %s\n\
 
 static char *format_get_crlf = "\
 GET %s HTTP/1.0\r\n\
+Host: %s\r\n\
 User-Agent: %s\r\n\
 Accept: */*\r\n\
 %s\
@@ -257,6 +261,7 @@ Accept: */*\r\n\
 
 static char *format_get2_crlf = "\
 GET %s?%s HTTP/1.0\r\n\
+Host: %s\r\n\
 User-Agent: %s\r\n\
 Accept: */*\r\n\
 %s\
@@ -265,6 +270,7 @@ Accept: */*\r\n\
 
 static char *format_post_crlf = "\
 POST %s HTTP/1.0\r\n\
+Host: %s\r\n\
 User-Agent: %s\n\
 Accept: */*\r\n\
 Content-length: %d\r\n\
@@ -405,6 +411,14 @@ int crlf;
   char *query;
   char *auth_info = NULL;
   char *format;
+  char* c_host;
+
+  c_host = malloc(strlen(up->hostname) + 10); /* not a good code but should work */
+  if(up->port == 0){
+    sprintf(c_host, "%s", up->hostname);
+  }else{
+    sprintf(c_host, "%s:%d", up->hostname, up->port);
+  }
 
   if (up->data_type == NULL) data_type = "application/x-www-form-urlencoded";
   else data_type = up->data_type;
@@ -431,11 +445,13 @@ int crlf;
 			strlen(up->request_data) +
 			strlen(extra_header) +
 			strlen(auth_info) + 
-			strlen(USER_AGENT) + 1);
+			strlen(USER_AGENT) +
+			strlen(c_host) + 1);
       sprintf (query,
 	       format,
 	       filename,
 	       up->request_data,
+	       c_host,
 	       USER_AGENT,
 	       extra_header,
 	       auth_info);
@@ -449,10 +465,12 @@ int crlf;
 			strlen(data_type) +
 			strlen(extra_header) +
 			strlen(auth_info) +
-			strlen(USER_AGENT) + 1);
+			strlen(USER_AGENT) +
+			strlen(c_host) + 1);
       sprintf (query,
 	       format,
 	       filename,
+	       c_host,
 	       USER_AGENT,
 	       strlen(up->request_data),
 	       data_type,
@@ -469,16 +487,19 @@ int crlf;
 		      strlen(format) +
 		      strlen(extra_header) +
 		      strlen(auth_info) + 
-		      strlen(USER_AGENT) + 1);
+		      strlen(USER_AGENT) + 
+		      strlen(c_host) + 1);
     sprintf (query,
 	     format,
 	     filename,
+             c_host,
 	     USER_AGENT,
 	     extra_header,
 	     auth_info);
   }
 
   free(auth_info);
+  free(c_host);
 
   return(query);
 }

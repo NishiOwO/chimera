@@ -331,7 +331,11 @@ ReapChild()
   * checked into it.  This gets us off the ground with SYSV.  RSE@GMI
   */
 #if defined(WNOHANG) && !defined(SYSV) && !defined(SVR4)
+#ifdef __linux__
+  int st;
+#else
   union wait st;
+#endif
 
   do 
   {

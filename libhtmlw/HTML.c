@@ -53,6 +53,7 @@
  ****************************************************************************/
 
 #include <stdio.h>
+#include <stdlib.h>
 #include "HTMLP.h"
 #include "DrawingArea.h"
 #include <X11/Xaw/Scrollbar.h>

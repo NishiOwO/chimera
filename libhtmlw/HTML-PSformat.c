@@ -41,7 +41,7 @@
  *		permission of John Bradley.
  */
 
-#include <varargs.h>
+#include <stdarg.h>
 
 #include <stdio.h>
 #include <ctype.h>
@@ -173,7 +173,6 @@ static float GetDpi ARG1(HTMLWidget, hw) {
    look at the problem, the following pre-ANSI code should workaround
    the problem." */
 static int PSprintf ARG1V(char *,format, ...) {
-        va_dcl
         va_list args;
         int     len;
         char    *s;
@@ -198,9 +197,7 @@ static int PSprintf ARG1V(char *,format, ...) {
 }
 #else /* not BROKEN_SOLARIS_COMPILER_STDARG */
 static int 
-PSprintf (format, va_alist)
-char* format;
-va_dcl
+PSprintf (char* format, ...)
 {
 	int 	len;
 	char 	*s;
@@ -214,7 +211,7 @@ va_dcl
 		}
 		PS_string = s;
 	}
-	va_start(args);
+	va_start(args, format);
 	len = vsprintf(PS_string+PS_len, format, args);
 	/* this is a hack to make it work on systems were vsprintf(s,...)
 	 * returns s, instead of the len.
