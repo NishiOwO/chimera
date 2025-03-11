@@ -1,0 +1,10 @@
+#
+# protocol
+#
+# protocol_name     program name
+#
+# for example,
+# 
+# nntp              /fullpath/access_nntp
+#
+#nntp                /home/john/bin/access_nntp

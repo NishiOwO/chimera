@@ -1,0 +1,17 @@
+#include <../Common.tmpl>
+
+all::
+
+MakeDirectories(install,$(CLIBDIR))
+
+InstallNonExec(convert,$(CLIBDIR))
+InstallNonExec(home.html,$(CLIBDIR))
+InstallNonExec(help.html,$(CLIBDIR))
+InstallNonExec(mime.types,$(CLIBDIR))
+InstallNonExec(mailcap,$(CLIBDIR))
+InstallNonExec(protocol,$(CLIBDIR))
+InstallNonExec(cacheinfo,$(CLIBDIR))
+
+depend::
+
+install.man::

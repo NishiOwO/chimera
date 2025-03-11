@@ -1,0 +1,163 @@
+*background:                moccasin
+*showGrip:                  false
+
+*Scrollbar.background:      burlywood2
+*Command.background:        burlywood2
+*MenuButton.background:     burlywood2
+*SimpleMenu.background:     burlywood2
+*SmeBSB.background:         burlywood2
+*Box.orientation:           horizontal
+*Label.borderWidth:         0
+*form.resizeable:           true
+*form.borderWidth:          0
+
+*allowHoriz:       true
+*allowVert:        true
+
+*html.horizontalScrollOnTop: true
+*html.activeAnchorBG:       moccasin
+*html.anchorUnderlines:     1
+*html.visitedAnchorUnderlines: 1
+*html.dashedVisitedAnchorUnderlines: true
+!*html.anchorUnderlines:     0
+!*html.visitedAnchorUnderlines: 0
+!*html.dashedVisitedAnchorUnderlines: false
+*html.autoSize:             true
+*html.height:               600
+*html.width:                600
+
+*filepopup*filename.label: Filename :
+*filepopup*filename.left: ChainLeft
+*filepopup*filename.right: ChainLeft
+*filepopup*save.width: 300
+*filepopup*save.left: ChainLeft
+*filepopup*save.right: ChainRight
+*filepopup*savebutton.label: Save
+
+*filepopup*printer.label:  Printer  :
+*filepopup*printer.left:  ChainLeft
+*filepopup*printer.right:  ChainLeft
+*filepopup*print.left:  ChainLeft
+*filepopup*print.right:  ChainRight
+*filepopup*printbutton.label: Print
+
+*filepopup*email.label: Email    :
+*filepopup*email.left:  ChainLeft
+*filepopup*email.right:  ChainLeft
+*filepopup*mail.left:  ChainLeft
+*filepopup*mail.right:  ChainRight
+*filepopup*mailbutton.label: Mail
+
+*filepopup*clearbutton.label: Clear
+*filepopup*dismissbutton.label: Dismiss
+
+*plainmenuitem.label: Plain Text
+*prettymenuitem.label: Pretty Text
+*psmenuitem.label: Postscript
+*htmlmenuitem.label: HTML
+
+*stringpopup*field.width: 300
+
+*Lister*listok.label:       Open
+*Lister*listdelete.label:   Delete
+*Lister*listadd.label:      Add
+*Lister*listcancel.label:   Dismiss
+*Lister*groupok.label:      Open Group
+*Lister*groupdel.label:     Delete Group
+*Lister*groupadd.label:     Add Group
+*Lister*defaultColumns:     1
+*Lister*forceColumns:       true
+
+*Lister*listerlist.borderWidth: 0
+*Lister*listerview.width:   500
+*Lister*listerview.height:  200
+*Lister*listerview.borderWidth: 0
+*Lister*listerbox2.borderWidth: 0
+*Lister*listerbox2.defaultDistance: 0
+
+*Lister*listerlist2.borderWidth: 0
+*Lister*listerview2.width:  500
+*Lister*listerview2.height: 100
+*Lister*listerview2.borderWidth: 0
+*Lister*listerbox4.borderWidth: 0
+*Lister*listerbox4.defaultDistance: 0
+
+*urllabel.label:            URL   :
+*urllabel.left:             ChainLeft
+*urllabel.right:            ChainLeft
+*urldisplay.left:           ChainLeft
+*urldisplay.right:          ChainRight
+*urldisplay.fromHoriz:      urllabel
+*urldisplay*sensitive:      true
+*urldisplay*displayCaret:   true
+*urldisplay*editType:       edit
+*urldisplay.width:          500
+
+*titledisplay*sensitive:    false
+*titledisplay*displayCaret: False
+*titledisplay*editType:     read
+*titlelabel.label:          Title :
+*titlelabel.left:           ChainLeft
+*titlelabel.right:          ChainLeft
+*titledisplay.left:         ChainLeft
+*titledisplay.right:        ChainRight
+*titledisplay.fromHoriz:    titlelabel
+*titledisplay.width:        500
+
+*file.label:                File
+*open.label:                Open
+*cancel.label:              Cancel
+*bookmark.label:            Bookmark
+*quit.label:                Quit
+*reload.label:              Reload
+*help.label:                Help
+*source.label:              Source
+*home.label:                Home
+*back.label:                Back
+*search.label:              Search
+
+*Label.font:    -*-lucidatypewriter-medium-r-normal-*-*-120-*-*-*-*-iso8859-1
+*Command.font:       -*-lucida-bold-r-normal-sans-*-120-*-*-*-*-iso8859-1
+*MenuButton.font:       -*-lucida-bold-r-normal-sans-*-120-*-*-*-*-iso8859-1
+*SimpleMenu.font:       -*-lucida-bold-r-normal-sans-*-120-*-*-*-*-iso8859-1
+*SmeBSB.font:       -*-lucida-bold-r-normal-sans-*-120-*-*-*-*-iso8859-1
+*printsave.font:     -*-lucida-bold-r-normal-sans-*-120-*-*-*-*-iso8859-1
+*getstring.font:     -*-lucida-bold-r-normal-sans-*-120-*-*-*-*-iso8859-1
+*Lister.font:        -*-lucida-bold-r-normal-sans-*-120-*-*-*-*-iso8859-1
+*UserTextInput.font: -*-lucida-bold-r-normal-sans-*-120-*-*-*-*-iso8859-1
+*urldisplay.font:    -*-lucida-bold-r-normal-sans-*-120-*-*-*-*-iso8859-1
+*titledisplay.font:  -*-lucida-bold-r-normal-sans-*-120-*-*-*-*-iso8859-1
+
+*header1Font:   -*-helvetica-bold-r-normal-*-*-240-*-*-*-*-iso8859-1
+*header2Font:   -*-helvetica-bold-r-normal-*-*-180-*-*-*-*-iso8859-1
+*header3Font:   -*-helvetica-bold-r-normal-*-*-140-*-*-*-*-iso8859-1
+*header4Font:   -*-helvetica-bold-r-normal-*-*-120-*-*-*-*-iso8859-1
+*header5Font:   -*-helvetica-bold-r-normal-*-*-100-*-*-*-*-iso8859-1
+*header6Font:   -*-helvetica-bold-r-normal-*-*-80-*-*-*-*-iso8859-1
+*font:          -*-helvetica-medium-r-normal-*-*-120-*-*-*-*-iso8859-1
+*boldFont:      -*-helvetica-bold-r-normal-*-*-120-*-*-*-*-iso8859-1
+*italicFont:    -*-helvetica-medium-o-normal-*-*-120-*-*-*-*-iso8859-1
+*addressFont:   -*-helvetica-medium-o-normal-*-*-140-*-*-*-*-iso8859-1
+
+!
+! old fonts in case you don't have the ISO guys
+!
+!*Label.font:    -*-lucidatypewriter-medium-r-normal-*-*-120-*-*-*-*-*-*
+!*Command.font:       -*-lucida-bold-r-normal-sans-*-120-*-*-*-*-*-*
+!*printsave.font:     -*-lucida-bold-r-normal-sans-*-120-*-*-*-*-*-*
+!*getstring.font:     -*-lucida-bold-r-normal-sans-*-120-*-*-*-*-*-*
+!*Lister.font:        -*-lucida-bold-r-normal-sans-*-120-*-*-*-*-*-*
+!*UserTextInput.font: -*-lucida-bold-r-normal-sans-*-120-*-*-*-*-*-*
+!*urldisplay.font:    -*-lucida-bold-r-normal-sans-*-120-*-*-*-*-*-*
+!*titledisplay.font:  -*-lucida-bold-r-normal-sans-*-120-*-*-*-*-*-*
+!
+!*header1Font:   -*-helvetica-bold-r-normal-*-*-240-*-*-*-*-*-*
+!*header2Font:   -*-helvetica-bold-r-normal-*-*-180-*-*-*-*-*-*
+!*header3Font:   -*-helvetica-bold-r-normal-*-*-140-*-*-*-*-*-*
+!*header4Font:   -*-helvetica-bold-r-normal-*-*-120-*-*-*-*-*-*
+!*header5Font:   -*-helvetica-bold-r-normal-*-*-100-*-*-*-*-*-*
+!*header6Font:   -*-helvetica-bold-r-normal-*-*-80-*-*-*-*-*-*
+!*font:          -*-helvetica-medium-r-normal-*-*-120-*-*-*-*-*-*
+!*boldFont:      -*-helvetica-bold-r-normal-*-*-120-*-*-*-*-*-*-*
+!*italicFont:    -*-helvetica-medium-o-normal-*-*-120-*-*-*-*-*-*
+!*addressFont:   -*-helvetica-medium-o-normal-*-*-140-*-*-*-*-*-*

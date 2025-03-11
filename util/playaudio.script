@@ -1,0 +1,11 @@
+#!/bin/sh
+
+if [ -w /dev/audio ]
+then
+	if [ -f "$1" ]
+	then
+		cat $1 > /dev/audio
+	fi
+else
+	echo Your computer probably does not support sound
+fi

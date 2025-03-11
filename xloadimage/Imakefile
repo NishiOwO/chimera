@@ -1,0 +1,11 @@
+#include <../Common.tmpl>
+
+OBJS = gif.o new.o misc.o xbitmap.o reduce.o dither.o halftone.o \
+       xpixmap.o pbm.o
+
+SRCS = gif.c new.c misc.c xbitmap.c reduce.c dither.c halftone.c \
+       xpixmap.c pbm.c
+
+NormalLibraryTarget(loadimg, $(OBJS))
+
+DependTarget()

@@ -1,0 +1,21 @@
+#!/bin/sh
+#
+# This is only meant to be a suggestion/example.  It is not installed
+# by default.
+#
+# You may need to change the version number or other
+# information.  I install the actual executable with the version
+# number appended and then change this script to call it when
+# everything is ready to go.
+#
+
+XFILESEARCHPATH=/local/infosys/lib/app-defaults/%N
+export XFILESEARCHPATH
+
+#
+# You may want to make sure the cache dir is ready to go here.  Maybe
+# figure out the best place to put it and set the appropriate
+# environment variables or X resources.
+#
+
+exec /local/infosys/bin/chimera-1.55 "$@"

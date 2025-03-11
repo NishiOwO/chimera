@@ -1,0 +1,137 @@
+/*
+ * Common config file
+ *
+ * Don't forget to look at options.h to make sure that it looks OK.
+ */
+
+/*
+ * If the compile fails because the command lines are too long then move
+ * the CDEFINES stuff into options.h (has to be done on DEC OSF/1 and
+ * Ultrix machines).
+ */
+
+/*
+ * Installation directories.  Uncomment and change to taste if you want to
+ * install in a "non-standard" directory.
+ *
+ * You might want to set CUTILDIR to $(LIBDIR)/chimera to keep the
+ * utilities/filters separate from the main binaries.
+ *
+ * CBINDIR  - chimera's executable and other arch dependent stuff
+ *            gets installed here
+ * CUTILDIR - scripts and other arch independent stuff goes here but the
+ *            default is to use BINDIR.
+ * CLIBDIR  - configuration files
+ * CMANDIR  - manual pages (not used)
+ */
+CBINDIR = $(BINDIR)
+CUTILDIR = $(BINDIR)
+CLIBDIR = $(LIBDIR)/chimera
+CMANDIR = $(MANDIR)
+
+CDEFINES = \
+-DCUTILDIR=\"$(CUTILDIR)\" \
+-DCONVERT_FILES=\"~/.chimera_convert:$(CLIBDIR)/convert\" \
+-DMIME_TYPE_FILES=\"~/.chimera_mime.types:$(CLIBDIR)/mime.types\" \
+-DMAIL_CAPS=\"~/.mailcap:$(CLIBDIR)/mailcap\" \
+-DPROTOCOL_FILES=\"~/.chimera_protocol:$(CLIBDIR)/protocol\" \
+-DCACHE_INFO_FILES=\"~/.chimera_cacheinfo:$(CLIBDIR)/cacheinfo\" \
+-DHELP_URL=\"file:$(CLIBDIR)/help.html\" \
+-DHOME_URL=\"file:$(CLIBDIR)/home.html\"
+
+/*
+ * These may need to be changed if you customize the location of the
+ * app-defaults or the man pages.
+ */
+/*
+XAPPLOADDIR = $(CLIBDIR)
+MANSUFFIX = 1
+*/
+
+/*
+ * Uncomment if you want to use SOCKS.
+ *
+ * SOCKSLIB probably needs to be something like
+ * -L/usr/local/lib -lsocks
+ */
+/*
+CSOCKS = -DSOCKS
+CSOCKSLIB = -lsocks
+*/
+
+/*
+ * TERMLIB should be something like -L/usr/local/lib -lclient
+ * TERMINC should be something like -I/usr/local/include
+ *
+ * Term 2.x is required
+ *
+ */
+/*
+CTERMLIB = -L/usr/local/term/lib -ltermnet
+CTERMINC = -I/usr/local/term/include
+CTERM = -DTERM
+*/
+
+/*
+ * Uncomment this if you want to use Xaw3d.  Change xawdir to the
+ * actual location of your Xaw3d library.
+ */
+/*
+XAWLIB = -Lxawdir -lXaw3d
+*/
+
+/*
+ * You will need to comment out the HAVE_*_H's that you don't have.
+ */
+#if NeedFunctionPrototypes
+MYPROTO =
+#else
+MYPROTO = -D_NO_PROTO
+#endif
+
+/*
+ * OSF/1 users need to uncomment this.  Others might need it too.
+ */
+/*
+MYBSD = -D_BSD
+*/
+
+/*
+ * Uncomment as needed
+ */
+/*
+ * You may need to define NEED_GETCWD on SunOS 4 machines because it
+ * was doing weird things for me.
+ */
+/*
+NEEDFUNCS = -DNEED_STRSTR -DNEED_GETCWD
+*/
+
+EXTRA_DEFINES = -DHAVE_STDLIB_H -DHAVE_STRING_H -DHAVE_UNISTD_H -DHAVE_MALLOC_H $(MYPROTO) $(MYBSD) $(NEEDFUNCS)
+
+/*
+ * Extra libraries
+ */
+/*
+EXTRA_LIBRARIES = -lbsd            # DEC OSF/1 & AIX
+EXTRA_LIBRARIES = -lresolv -lm     # Some SunOS folks
+*/
+
+/*
+ * Extra link/load flags.  Used here for making statically linked executables.
+ */
+/*
+EXTRA_LOAD_FLAGS = -static
+*/
+
+/*
+ * So we can do conditional compilation depending on the release of X11
+ */
+#if defined(ProjectX)
+SHTAB = ProjectX
+XRELEASE = -DXRELEASE=$(SHTAB)
+#else
+XRELEASE = 0
+#endif
+
+#define MyNull

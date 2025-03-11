@@ -1,0 +1,684 @@
+1.63
+------------
+Fixed error that caused endless recursion in CreateImageInfo()
+Added CHILD_STDERR #define so that the stderr of child processes canb
+  be sent someplace useful.
+Changed the first line in the util/access_* scripts.
+Added (unsigned char *) to calls to EscapeURL().
+
+1.62
+------------
+Cleaned a lot of stuff up that isn't listed here.
+Code in http.c can now handle caseless methods (GET, PUT,...)
+Changed xloadimage/options.h to xloadimage/xloptions.h
+Hardcoded size of view widget when SELECT is used because I kept getting
+  a zero widget size and it would exit.
+When the search code finds something it will position it in the middle of
+  the viewport instead of at the very top.
+Escaping of URLs should work better.
+The URL handling changed again.  Hopefully it is in good shape now...seems
+  to work well.
+Added cacheIgnoreExpires X resource.
+Now pays attention to the 'Expires' field.
+Multiple caches can be specified with different charactertistics.  The
+  "old" way of doing things is still supported using the old (but slightly
+  changed) X resources.
+Added handling of WM_DELETE_WINDOW
+  Roman Czyborra <czyborra@cs.tu-berlin.de>
+When 'Location' or 'URI' appear in a response from the server, the cache
+  is consulted first to check to see if the document is cached.  It used
+  to grab the document from the source no matter what.
+noProxy and allProxy resources added.
+Added 'all_proxy' so only one proxy variable has to be set for all protocols.
+Fixed bogus _PROTO mistake where _NO_PROTO was supposed to be in Common.tmpl.
+Changed util/Imakefile so that MakeDir wasn't used.
+Fixed bug in MakeURLParts() that caused URLs to inherit path info from
+  the part URL even though they have different protocols.
+Added to code to main() so that chimera can handle stuff like
+  'chimera mumble.html'.  Added getcwd() to util.c with #ifdef
+  in case some systems need it.
+Fixed src/Imakefile. Markku Savela <msa@hemuli.tte.vtt.fi>
+Patch to net.c for Solaris machines to include file.h.
+  Gareth Owen <oweng@aston.ac.uk>
+Hardcoded (whine, whine) some MIME types so that chimera can identify
+  some file: and ftp: documents without the mime.types file.
+Hardcoded (whine) a convert entry so that chimera doesn't need a convert
+  file to handle text/plain stuff.
+Snarfed strstr() from the Tcl distribution and added NEED_STRSTR to
+  Common.tmpl.
+ext wasn't being used in URLParts so it was removed.
+Added 'extern int errno' to the appropriate files in src/.
+Moved the HAVE_xxxxxx_H's to Common.tmpl.dist so that all directories see
+  them and removed them from options.h.dist.
+Added patch for 16bit displays.  davidh@use.com
+Added scrolling patch. asami@cs.berkeley.edu
+Fixed authentication problems.  If the server returned a relocation
+  status then chimera wanted the user to reenter the auth info.  Also,
+  if invalid auth info is entered, chimera won't repeatedly send the
+  information to the server (it will prompt for new info).
+X Bitmap reading code works now.
+Fixed HandleDoc so that all documents go through ConvertDocument().  The
+  reason this needs to happen is for documents that needed to have
+  a content or transfer encoding decoded.
+Inline images work on monochrome displays now.
+Reworked the convert code.  The convert file is simpler and the
+  convert code is simpler.
+Added PNM code to the xloadimage directory.
+Added XPM code to the xloadimage directory.  Its slow seems to work
+  for XPM3 images.
+Added HAVE_xxxxxx_H's to options.h.  This is bound to cause trouble
+  and piss people off but at least now compilations can be done
+  with 'gcc -Wall' and there is a chance there will be no
+  warnings.
+Fixed bug in main().  Not enough args specified.
+The default bookmark group is now the first bookmark group in the
+  group list.
+Changed the default cache directory to /tmp.  Changed the cleanUp
+  default to True so that cache files do not get left laying around.
+Tested with term 2.2.8 and it seems to work fine.  Chimera requires
+  version 2.x (I'm not sure about versions earlier than 2.2.8, though).
+  Some changes were made to options.h.dist and net.c.
+giftrans removed (no longer needed)
+Fixed incorrect prototypes in net.h.
+  Jim.Rees@umich.edu
+Fixed problems with the Imakefiles and a prototype in main.c
+  Dean Huxley (dean@fsa.ca)
+Chimera can now handle GIFs directly.  The number of colors in an
+  inline image can be reduced using the "maxColors" resource.  The code
+  for XBM is there but it doesn't work.  Monochrome screens are kind
+  of support...most images end up being garbled but some work out
+  OK.
+Changed the way MIME stuff is parsed.  It is still extremely primitive
+  but made ParseHTTP() much easier to deal with.  ReadCache() also
+  changed.  Now there is a MIMEField field in Document.  This contains
+  a list of all the MIME fields even if chimera doesn't know what they
+  mean so that the fields can be passed to other programs.  I'm not sure
+  how useful it is.
+Cache files no longer have HTTP/1.0... as the first line.
+Added patches to file(), ReadLine(), and ReadInput().
+  Thomas Eberhardt <thomas@mathematik.uni-Bremen.de>
+Replaced net_write() with WriteBuffer() which deals with non-blocking IO.
+Renamed ReadInput() to ReadBuffer() to make things consistent.
+Replaced the #if NeedFunctionPrototypes with #ifndef _NO_PROTO.
+Removed includes from auth.h.
+FTP uses WriteBuffer, ReadLine, and ReadBuffer so the cancel button works
+  and the code is cleaner.
+Added patch to close ALL descriptors in ConvertDocument() now.
+  J.D.Coleman <J.D.Coleman@newcastle.ac.uk>
+Fixed places where the content-type of the document wasn't being set.
+The bookmarks can now be grouped.  In fact, there has to be at least one
+  group.
+Changed test-chimera to look something like the way Nicolas.Pioch@enst.fr
+  had it at one point.  Now uses XUSERFILESEARCHPATH and does not screw
+  up the server variables.  Jim Wight <J.K.Wight@newcastle.ac.uk>.
+Added <sys/types.h> to util.c
+Create lang.c and stringdb.c to deal with alternate language stuff and
+  to provide a way of passing environment strings and X resources around.
+Added X resources for httpProxy, ftpProxy, gopherProxy, nntpProxy, newsProxy,
+  urnProxy, waisProxy.
+The authentication code changed again.  Chimera will download auth
+  pages twice...once to find out the realm and once to pass in the
+  authentication information.  There is a short cut allowed...entire
+  directories and its subdirectories use the same username and password.
+  Chimera doesn't use this, however, because using the realm for all
+  documents make coding consistent and simple.  Chimera also looks at
+  the hostname, protocol, and port in case another site is using the same
+  realm to grab the auth info.  Only Basic is supported.
+Changed help.html to explain delayImageLoads.  Removed DELAY_IMAGE_LOADS
+  from options.h because it wasn't used.
+No longer have to move the cursor to the text widget in a string popup.
+  The focus is set correctly.
+Fixed a problem with the delayed image load code.
+Made a change to ConvertDocument so that it doesn't cause a Seg fault
+  when the converter isn't in the path or otherwise unavailable.
+Cleaned up the document and url structures and their utility functions.
+Added CACHE_AUTH so that caching of authenticated documents can be
+  activated at compile-time.  The user is responsible for the security
+  of their own cache directory.
+
+1.61
+----
+Pages that require authentication are no longer cached.
+Gopher menus and searches now have a heading as well as a title describing
+  what the document is about.
+Fixed ParseURL() to look for '/' before anything else because people
+  can put seriously funky things in the filename part as long as the
+  slash is first.
+Fixed spelling errors in help.html.
+Removed #include <Xm/XVaSimple.h> (or something) from libhtmlw/HTML-PSformat.c.
+Added some software requirements to INSTALL.
+Added hints for Alpha AXP OSF/1. (Still doesn't work...at least on 2.0)
+Reworked the network I/O stuff to get rid of the stdio routines.  Stdio is
+  used for file I/O but the "regular" UNIX stuff is used for network I/O
+  so that select() can be used.  This required that ReadPipe() no longer
+  use popen().
+Made changes in document.c to check to make sure that absolute URLs
+  are supplied when required.
+The transfer status should now show the total bytes for HTTP/1.0 and FTP
+  but not for cache reads.
+Added a patch from Azuma OKAMOTO <lfo@sayori.dais.is.tohoku.ac.jp> to
+  WriteCache().
+Made nasty hacks to please the URN people.  Chimera can, I think, pass
+  URNs to a URN proxy.
+Added patch to EscapeURL() from "J.D.Coleman" <J.D.Coleman@newcastle.ac.uk>
+  I need to learn more about international character stuff.
+Gopher code processes the Gopher+ stuff on the fly instead of buffering
+  and then parsing.  Hope gopher servers can handle a connection being
+  closed before end of input.
+Documents in subdirectories do not have to be authenticated once
+  the parent has been authenticated.  UNTESTED.
+Made changes to accomodate TERM 2.x.  UNTESTED.
+  Andy Moskoff <andy@wx.gtegsc.com>
+Fixed missing </h1> in header for gopher search.
+Added patch to access_nntp provided by Rob May.  UNTESTED.
+Added patch to http_main() that fixed a possible seg fault.
+  Azuma OKAMOTO <lfo@sayori.dais.is.tohoku.ac.jp>
+Modified the protocol and hostname handling code in MakeURLParts() to
+  make sure that a protocol and hostname was present in all URLParts
+  processed by MakeURLParts().
+Rearranged the entries in lib/home.html into an obnoxious UNLV-centric
+  way.
+
+1.60 prerelease 18-real release
+-------------------------------
+Fixed main() to create a fake context URL in case the command line
+  specified URL is relative.
+ReadInput() now accepts FILE * instead of a descriptor.  It also allows
+  line input.
+ParseHTTP() now uses the fancier ReadInput() to parse HTTP as it is
+  loaded which seems to save a lot of time.
+Changed Common.tmpl so that configuration is easier.
+Replaced my ParseURL() with one written by
+  Rob May <robert.may@rd.eng.bbc.co.uk>.  Modified it a bit to match
+  changes in URLParts.
+Changed dotelnet and do3270 to match changes in URLParts.
+Added support for "Basic" and "user" authentication.  Needs work.
+Fixed SubmitForm() in main.c to make it replace all spaces with
+  '+'
+Made some changes so that the labels for the popup menu in the file
+  requester can be changed and things will work right (just check it
+  out...it is a pain to explain).
+Added some resources in fallback.c (which was created) so the the
+  file requester and bookmark requester will look good without the
+  app-defaults.
+Changed the function calls to WriteCache(), ReadCache(), and
+  LoadDocument() to get rid of bogus arguments.
+Changed ImageResolve() to use LoadDoc() to eliminate duplicate code.
+Changed the string popup so that the pointer warps to the text field.
+  This is done after the popup window is put on the mouse cursor
+  so that the warp is not bad.  Should probably just put the text field
+  under the cursor in the first place...
+Wrote another ParseURL() using Rob May's code.
+Made changes to FixFilename() as supplied by Rob May.
+Initialized d to NULL in LocalProtocol().
+Made ParseHTTP() read until end of input because the Content-length is
+  wrong for a good number of the documents served.
+Calls HTMLFreeImageInfo() so that image data gets free'd.
+Fixed MakeURLParts() so that the extra fields get copied to the new
+  URLParts.
+Made some changes to the gopher to make it work better.  I really hate
+  gopher.
+Made CreateCommandLine() to create command lines to pass to system()
+  and popen().
+Made change to call to http_proxy() in document.c  rup and up were
+  switched again.  Rob May.
+Documents are flushed from the cache if they get too old and their
+  link is checked when a page is displayed.  What this means is that
+  links will only be dashed when the document will be fetched
+  from the cache.
+
+1.60 prerelease 17
+------------------
+Fixed BASE handling code in ImageResolve.
+Fixed bug in url.c.  username and password in URLParts wasn't getting
+  initialized.  Created CreateURLParts() to make initializing consistent.
+The default port is now 0 instead of -1 in URLParts.  -1 was bothering
+  me.
+
+1.60 prerelease 16
+------------------
+Fixed Imakefile problems for X11R4 users.
+Fixed bug in proxy code in ProxyProtocol in document.c
+  robert.may@rd.eng.bbc.co.uk
+Made md5.c compile with non-ANSI C compilers.
+
+1.60 prerelease 12-15
+---------------------
+Added statusUpdate resource to control how often the download status is
+  displayed.
+Made change to telnet_main as recommended by robert.may@rd.eng.bbc.co.uk.
+  Note: I do not really worry about telnet URLs so if you are interested
+  in them then you'll need to take care of bugs yourself...I'll add patches
+  but I don't test them.  My philosophy: telnet URLs suck and I don't
+  want to deal with them.
+Made changes in the util directory to remove the .script extension from
+  scripts so that they can be executed when test-chimera is used.
+Incorporated Mosaic 2.4 widget.
+Made changes to the way arguments to gopher*(), http(), ftp(), ... are
+  called so they are more reasonable.
+Changed the name of the content file to convert to better reflect what
+  it is used for.
+Changed some file resources to be colon-delimited lists of files.  This
+  was suggested by someone on bug-chimera but I don't remember who.  The
+  resources end in 'Files'.
+Improved (?) error reporting.
+Changed the help file and [some of?] the documentation to reflect changes
+  to chimera.
+Applied fix to the gopher code from Armin Buehler
+  <armin@TechFak.Uni-Bielefeld.DE>
+Made changes to src/Imakefile (set library dependencies correctly) and
+  libhtmlw/HTML.c (to do line-by-line scrolling).  NOTE: changes in the
+  widget break this feature...I'll fix it later.
+  Satoshi ASAMI <asami@cory.EECS.Berkeley.EDU>
+Finally added delay image loads.  Several people contributed this
+  code (hint, hint) but I used the code from
+  Paul Kern <pkern@utcc.utoronto.ca>.  There was pretty much one way to
+  do it.
+Added support for the BASE tag.
+
+1.60 prerelease 10-11
+---------------------
+Minor thrashing around.  Do a diff :)
+
+1.60 prerelease 9
+-----------------
+Took some configuration stuff out of Common.tmpl and stuck it in
+  options.h.
+Change the Imakefile in util to make the target for giftrans correct.
+Got source for HTMLformat.c and HTMLwidgets.c so input TYPE="hidden"
+  is handled.  Michael Kellen <uphrrmk@oscs.montana.edu>
+Replaced 'mailcap.types' with 'mailcap' in lib/Imakefile.
+Made the option menu in forms appear with the default selection instead of
+  the name.
+Fixed a problem which caused some documents to get chopped short in
+  ParseHTTP().
+Added external protocol handlers.  An NNTP handler program was written by
+  jeff@isri.unlv.edu.
+ReadPipe() replaces pipeit() and is cleaned up in the process.
+Changed FixFilename() to return a static string instead of malloc'd
+  memory.  This made code in other places a bit cleaner.
+Fixed problems with lib/Imakefile and moved some configuration into a
+  header file.
+
+1.60 prerelease 8
+-----------------
+Added a cancel button.  Changed main.c, ftp.c, gopher.c, and http.c.
+Added input.c to handle the network input for gopher.c, http.c, ftp.c.
+Added argument to DisplayTransferStatus so that total size can be
+  displayed.
+Fixed a problem in ReadContentFile() where the next pointer in a structure
+  was not being set to NULL.  Reinhard Stix <stix@bau2.uibk.ac.at>
+Made the gopher module aware of filename extensions.
+Fixed cache.c so that the cache off environment vars/resources really work.
+Cleaned up stuff in main.c to make the URL and Title displays work
+  correctly and did other general cleanup.
+Fixed lib/Imakefile so that mime.types is installed.
+  Johann Friedrich Heinrichmeyer <fritz.heinrichmeyer@fernuni-hagen.de>
+Changed Common.tmpl* to allow the NO_SELECT guy to be set.
+Added test-chimera so that testing chimera in place is easier.
+Fixed dest->tencoding = src->encoding in TransferDocument().
+Added giftrans so that transparent GIFs can be handled.  giftrans
+  written by Andreas Ley <ley@rz.uni-karlsruhe.de>.
+Added chimera-giftoppm and made changes to the content file to handle
+  transparent GIFs.  <Nicolas.Pioch@enst.fr>
+Inline images are now reloaded when a document is reloaded.
+Moved the utility programs to their own directory.
+The userContentFile entries now take priority over the contentFile entries.
+  Johann Friedrich Heinrichmeyer <fritz.heinrichmeyer@fernuni-hagen.de>
+Made changes to dotelnet, do3270, and local.c to make telnet URLs work better.
+  Nathan Torkington <Nathan.Torkington@vuw.ac.nz>
+Made changes in the way the content file is handled and made conversion
+  to plain text and external program.  This involved a lot of stuff.
+Added fromcache to the document structure to detect when documents
+  have been processed.
+Created urlgrab at the suggestion of Benno.  Type: urlgrab URL and the
+  document is grabbed and stuck in the default cache directory or the
+  directory indicated by the appropriate environment variable.
+Made more changes to main for the cancel button.  While I was at it I
+  decided to mangle main.c again.  There was a problem with Reload()
+  that prompted this.
+Mucked around with URLParts handling.  Now fields that aren't in the
+  URL are NULL instead of "".
+Made modifications to mime.types.
+Combined Save and Print into one requester created by PrintSave in popup.c.
+  Got rid of requester.c and replaced it with popup.c.  GetString() in popup.c
+  now handles the Open, Search, and other single string guys.  This is
+  good because it simplies main.c a lot and the Print/Save guy makes
+  much more sense.
+Modified the cache file format.  Cache files now look like HTTP/1.0 from
+  an HTTP server with extensions.  The extensions can be ignored.
+Made modifications to ParseHTTP to make it handle the new format of
+  cache files.  Made modifications to the arguments so that they made more
+  sense.
+Modified ProcessDocument() to make it handle the 'http' type in a
+  [hopefully] better way.
+Added code to read the EMAIL environment variable if it is set to use
+  for the email address for ftp access.  This is mostly for TERM users.
+Change soak() in ftp.c to use ReadInput so that the user can interrupt
+  the ftp protocol stuff and not just the data transfer.
+Changed ReadMIMETypes() to check for the number of fields returned
+  from the sscanf().
+Changed to MD5 for the cache filename hash.  The old hash was giving
+  errors.  MD5 will be needed for the auth stuff anyways...
+  condit@isri.unlv.edu.
+Added Mail button in the file requester.
+
+1.54
+----
+Fixed memory allocation/deallocation problems in ftp.c and gopher.c that
+  caused chimera to dump core.
+Made ChangeDocument a little more flexible.  It is used more often
+  to change the innards of documents so that you don't have to know
+  what is inside.
+Changed a bunch of code to use ChangeDocument to partly eliminate
+  direct manipulation of the Document.  Made a bunch of gratuitous
+  changes along with this just because I felt like it.
+Added ISO8859-1 to the end of the font strings for non-US users.  This
+  may cause problems (?) for R4 and earlier users so the old fonts are
+  commented out at the bottom of Chimera.ad.  This was suggested by
+  Marc Baudoin baudoin@ensta.fr.
+Changed Porthole.h to Porthole.c in mxw/Imakefile.
+  Rob May <robert.may@rd.eng.bbc.co.uk>
+Fixed the unbelievably stoopid mistake of leaving ANSI arguments in BSFunc.
+  This was pointed out by many folks on The List.
+Changed Common.tmpl so that all configuration stuff can be done there.  It
+  looks kind of ugly and it makes for long compile command lines (is
+  this going to be a problem?) but it seems to work.
+Fixed several calls to realloc_string() in MakeURLParts().
+Changed 'file:' to 'file' in MakeURLParts().
+Changed some code in main so that old URLs are replaced with the
+  possibly changed URL from the newly loaded document.  For example,
+  when HTTP returns the Location: field the URL can change.
+Fixed the SetSensitive code so that the Reload button is disabled
+  at the right time.
+Replaced the two occurances of MakeDocument with ChangeDocument and
+  removed MakeDocument.  MakeDocument was redundant.
+Changed the content-type handling code to use only the MIME content-types.
+  This required the stuff in mime.c to read the mime.types file.  Each
+  access method is now responsible for returning the content-type for
+  returned documents.
+ReadContentDB now allows a second content file to be specified which
+  allows a user content file to be used.  The default is ~/.chimera_content.
+  Can be specified with the resource *userContentFile.
+Added an experimental feature that allows local programs to be called
+  with user input from a form as its arguments.  See the content file
+  for sketchy details.
+Changed gopher.c so that \r\n is sent with requests instead of just
+  \n.  Suggested by Gareth Owen <oweng@aston.ac.uk>.
+There may have been some other changes that I forgot about.
+
+1.53
+----
+Changed the help page to explain the environment variables and resources
+  used by chimera.
+Changed ParseURL to return "/" instead of "" if no filename is specified.
+Changed MakeURLParts to put NULL in fields of newly allocated structure
+  to fix bug reported by Mike Kenney <mike@wavelet.apl.washington.edu>
+Added resources for CHIMERA_CACHE, CHIMERA_CACHE_SIZE, CHIMERA_CACHE_OFF,
+  CHIMERA_DOC_TTL.  Changed CHIMERA_MAX_SIZE to CHIMERA_CACHE_SIZE.
+Moved the cache code into cache.c and cleaned it up a bit.  The cache
+  functions are now called from the user interface code so there is
+  better control of the cache.
+Cleaned up document.c after creation of cache.c.
+Cache now caches processed versions of documents.  Right now this only
+  benefits inline image documents.  Benefits plaintext docs, too.
+Leading spaces on URLs are ignored.
+Got sick of the config script.
+Fixed <title></title> bug reported by Nicolas Pioch <pioch@inf.enst.fr> and
+  "Lee A. Butler" <butler@arl.mil> (supplied patch).
+Fixed problem in MakeURL reported by Gareth Owen <oweng@aston.ac.uk>.
+Added DisplayCurrent() in Reload().
+Thrashed around in MakeURLParts().
+Fixed the buildup of <plaintext> for text documents.  This easy fix
+  causes text files to take up twice the memory and disk, unfortunately.
+  Fix later.
+Fixed memory leak in SubmitForm()
+Added delete highlighted text when backspace is pressed for the requester.
+  I do not think that this patch changes existing behavior so it
+  shouldn't make anyone mad.
+  patch by Nathan Torkington <Nathan.Torkington@vuw.ac.nz>
+Made changes to Common.tmpl and Imakefiles as suggested by
+  George White <gwhite@astra.bio.dfo.ca>.  I actually did things a bit
+  differently.
+Changed ifdef's to use SVR4 as well as SYSV.
+Fixed the FORM stuff.  It was broken in an incredibly bad, silly way.
+  I am ashamed.  Required change in SubmitForm().
+Changed AddDocNode so that the HTML widget is refreshed only when a new
+  HTML document is loaded.
+Added code to http.c, file.c, document.c, and document.h to deal with
+  Content-encoding and Content-Transfer-encoding.  It is assumed that
+  the transfer decoding should happen first and then the regular
+  decoding should take place.  Also it is assumed that the content file
+  has entries for the decoder (like zcat for x-compress) and that
+  it is configured as a pipe.  Not really a restriction I guess.
+
+1.52
+----
+Rewrote ParseURL because it was a mess and to make the arguments
+  cleaner.  Removes length limitations on URL parts.
+Added support for the no_proxy environment variable.
+Added disk-based cache.  Removed old nasty cache (cache might be too strong
+  a word for what was used before).  Added new environment
+  variable called CHIMERA_CACHE which specifies the cache directory.
+  Changed config to prompt user for more information about cache.
+  Added cache parameters to conf.h.dist.  The existence the environ var
+  CHIMERA_CACHE_OFF turns the document cache off.
+  If CHIMERA_CACHE_SIZE is zero then there is no limit.  If CHIMERA_DOC_TTL
+  is zero then documents are not flushed because of their age.
+  I like absurdly long environment variable names.
+Decreased the frequency of the transfer counter.
+Changed the way the application resources are installed.  I did
+  this after suggestions made by Jim Wight <J.K.Wight@newcastle.ac.uk>.
+Added code so that the Pragma statement is sent to proxy servers when
+  appropriate.
+Changed the way URLs are handled.  They are now shipped in a structure
+The third mouse button causes info about an anchor to be displayed.
+  Currently it only provides the URL of the anchor.
+All memory allocations go through functions in util.c.  If malloc fails
+  then it is handled in util.c since at that point there is not much else
+  to be done.
+URLs can be entered in the URL display window.
+Fixed a zillion little bugs.
+pstopxm patch added.  Benno Blumenthal <benno@rainbow.ldgo.columbia.edu>
+
+1.51
+----
+Removed the 'contentPath' line from Chimera.ad and changed the scrollbar
+  resources slightly.
+Fixed a problem that caused Chimera to use POST when it shouldn't.
+  Required minor changes in http.c and main.c.
+Fixed the font definitions in Chimera.ad.
+Added proxy support for HTTP, Gopher, FTP, and WAIS.  Note that WAIS can
+  be proxied but it won't be done natively.
+
+1.50
+----
+Fixed Imakefile bogosities
+  Arne H. Juul <arnej@pvv.unit.no>
+Redirected stderr (and sometimes stdout) to /dev/null for content file
+  commands
+Changed defines for bcopy in src/net.c, libhtmlw/HTMLP.h, pbmplus/pbmplus.h
+  R. Stewart Ellis <ellis@nova.gmi.edu>
+Changed local.c so that file://localhost/blah will work.
+Changed file.c so that if the document is empty external programs are not
+  created and pipes are not opened to converters.
+Changed the bookmark code so that changes to the bookmark list are saved
+  immediately.
+The chimera distribution directory name reflects the version.
+Changed the resources file a bit.
+Fixed a URL problem where something like <a href=~john> would not work
+  because the URL ended up like http://blah~john instead of
+  http://blah/~john.
+The visited URL code now looks in the document cache to determine if
+  the document has been visited.
+Fixed the the URLs like <a href=blah.gif><a img=blah.gif></a> so that
+  they work as expected.  Fixing this sort of uncovered a massive memory
+  leak which I exploit to make the URLs work right.  At least the
+  memory will eventually get free'd when it gets flushed out of the cache.
+  Eventually.  Hopefully.  The cache needs fixing.
+Fixed the press scroll-key-shortcut in the scrollbar crash problem (huh?).
+  Unfortunately, you must make sure that the cursor is in the main
+  viewing area before the scroll key shortcuts will work.
+Fixed a problem in gopher.c that caused seg violations.
+Fixed a problem in ftp.c in soak() which caused seg violations.
+Fixed a gopher problem that caused chimera to report errors even when
+  there wasn't one...it was using gopher+ return codes when the gopher
+  protocol was used.  Probably needs more work.
+Will accept ~/ and ~user/ as filenames for saving and for loading local
+  files.
+
+1.49
+----
+Fixed the cache search broken in 1.48.
+Added a patch for TERM stuff in net.c in the function net_read.
+  Bill Reynolds <bill@goshawk.lanl.gov>
+Added m2c to convert the Mosaic hotlist file to the chimera bookmark file
+  format.  Anthony Starks <ajs@merck.com>
+Added code to deal with multiline greetings and messages from ftp servers.
+  Look at soak() in ftp.c.
+Fixed code in MakeRequester to prevent seg faults when the user tries
+  to add a bookmark for a document which doesn't have a URL
+  (error, info messages).
+Changed HandleDocument to eliminate some unnecessary screen refreshes
+  and so that the scroll bar isn't reset to the top after an external
+  document is loaded and displayed.
+
+1.48
+----
+Added patches to main.c and url.c from Jim Rees which fixed a memory
+  allocation error and a URL construction problem.
+Added patches to net.c and INSTALL for term from
+  Tom Boutell <boutell@netcom.com>
+Fixed a problem in gopher.c when dealing with the things like '1/' (now
+  it wants '11/').
+Made the config script work a little better and included SOCKS options.
+Fixed a memory leak in gopher.c.
+Fixed a search string problem in gopher.c.
+Made the title for gopher documents work better.
+Fixed the url#link stuff that was broken in 1.47.
+Added key shortcuts.
+  Charles Hedrick <hedrick@klinzhai.rutgers.edu>
+Changed document.c so that the cache ignores the '#' stuff.
+
+1.47
+----
+Fixed problem in SubmitForm (main.c) so that it handles the isindex stuff
+  correctly.
+Fixed a bug in http.c.  #links were appended to the filename.
+  Charles Hedrick.
+Added patches from "R. Stewart Ellis" <ellis@nova.gmi.edu> to make
+  the config script more flexible and to add TERM support to the
+  main sources.  It also made compilation on SYSV machines work better.
+Changed main.c so that the command line URL is used before the URL
+  specified by WWW_HOME. Benno Blumenthal benno@ldgo.columbia.edu
+Put alternate resources in src/Chimera.ajs.ad. Anthony Starks <ajs@merck.com>
+Fixed unbelievably poorly written mystrcmp and mystrncmp.  Grrr.
+Fixed the '..' code in url.c.  Again.
+Fixed the config script.
+Changed the JPEG instructions in INSTALL.
+Changed gopher_to_html and gopher_main to make them a bit smarter.
+Changed the content file to so that the gopher selector type works.
+Fixed the middle button download requester and the unknown file type
+  requester.
+Probably some other stuff I don't remember.
+
+1.46
+----
+Fixed the gopher problems which were introduced in 1.45.
+Fixed a bug with gopher selectors that start with '/' instead of '1/'
+Added the ftp patch provided by Jim.Rees@umich.edu.
+Changed the way requesters and listers are dealt with.  If a requester
+  is already activated and the user clicks on the same command then the
+  requester is raised.  If the user clicks on a different command then
+  old requester is deleted and the new one pops up.  The lister works
+  the same way but there is currently only one lister.
+  Also, if the requesters remember the last string and there is a
+  clear button.  Requesters now have a clear button.
+The Add button for the bookmark list now brings up a requester in case the
+  bookmark title is bogus.
+
+1.40-1.45 (1.40-1.44 were never released to the public)
+-----------------------------------------------------------
+Made the bookmark popup act very much like a famous WWW browser which uses
+  Motif.
+Removed bogusness from Common.tmpl.
+Changed src/Imakefile to use -g and -Wall if gcc is being used.
+Changed some resources to match lister changes.
+Added patches for local.c, gopher.c, and file.c from
+  "R. Stewart Ellis" <ellis@nova.gmi.edu>
+Made some fixes to src/content.c to make sure bogus matches aren't made
+  in GetContent.
+Added "file * text" to lib/content.
+Added search capabilities.  This needs to be refined to allow forward and
+  backward search and case-sensitive searching.  Right now it only allows
+  forward, case-insensitive searching with wrapping.
+Added print capabilities.
+Cleaned up code in various files.
+Added code to make the #id links into a document work.  Not really well
+  tested but it seems to work.
+Added resources in Chimera.ad to make the screen gray and change the
+  font.  The resources need to be uncommented first.
+  Looks especially good with Xaw3d.  Provided by ajs@merck.com.
+Added information to the INSTALL file.
+Changed the help file to reflect changes to the user interface.
+Added code to do the POST stuff correctly so FORMS support is more complete.
+Changed the XtAppPending loops in main.c to XFlush.  XFlush probably
+  isn't as good but I had problems with callbacks being made in the
+  middle of callbacks which was nothing but trouble.
+Added code to make '..' in URLs.  This is modelled on code from
+  Yap Kid Mun <KidMun.Yap@mel.dit.csiro.au>
+The bookmark list would not popup when there were no bookmarks which
+  meant that you could never add bookmarks...this is fixed.
+
+1.38
+----
+Fixed tmpnam related bug in file.c
+  Bob Smith <bob@snuffy.penfield.ny.us>
+Hacked on lib/help.html a bit for no reason.
+
+1.37
+----
+Cursor turns into a watch when Chimera is busy.
+Added code to make messages and cursor change occur right away
+  Yap Kid Mun <KidMun.Yap@mel.dit.csiro.au>
+Used the scrolling text widget for the URL and title displays.
+Changed ifndef sun in libhtmlw/HTMLparse.c to ifndef NOSTDHDRS
+Added a line to find the length of the text from gopher_to_html in gopher.c.
+Changed box widgets for the URL and Title displays to forms and chained
+  things together so the text widgets resize with the main window.
+  MAKE SURE YOU UPDATE THE RESOURCES!!!!!!!!!!!!!!!!!
+  Jim Wight <J.K.Wight@newcastle.ac.uk>
+Put in new pstoppm from benno.
+Fixed seg fault problem in DisplayDocNode in main.c
+  Yap Kid Mun <KidMun.Yap@mel.dit.csiro.au>
+Hacked gopher_to_html in gopher.c to allow missing fields in the gopher info.
+
+1.36
+----
+Added this CHANGES file (what a witty guy <cough>).
+Added -D_NO_PROTO to libhtmlw/Imakefile.
+Changed the INSTALL file very slightly for no reason.
+Took the #if XRELEASE crap out of the mxw source code and created mxw/X11/Xaw.
+Removed NULLs to tmpnam so strange machines don't cause problems.
+Made use of NOSTDHDRS for stdlib.h.
+Changed some bogus code from local.c which involved a variable called
+  buffer which wasn't being initialized.  This should help telnet
+  accesses.
+Added pstoppm which does a better job of dealing with postscript inline
+  images.  Changed src/Imakefile and lib/content to support this and removed
+  src/epswrap.script since it was no longer needed.
+  pstoppm was written by Benno Blumenthal benno@ldgo.columbia.edu
+Made changes to the end of MakeURL in url.c to make URL building better.
+Made changes to LoadDir in local.c to make it handle dirs with / on the end.
+  Should probably always kill trailing /'s so it only has to be
+  dealt with once.
+Stuck the new ScrollText.c from J.K.Wight@newcastle.ac.uk into mxw.
+Removed string.h from every file.  Why?
+Added 3270 stuff to src/document.c and added src/do3270.script.  Changed
+  lib/content to deal with 3270.  Bob Smith <bob@snuffy.penfield.ny.us>.
+
+0.0 - 1.35
+----------
+Screwed around with some code and eventually ended up with the mess I call
+Chimera 1.35.  A LOT of contributions were made by Jim Rees
+<Jim.Rees@umich.edu>.

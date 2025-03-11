@@ -1,0 +1,577 @@
+#!/local/perl/bin/perl
+#
+# $Id: access_cache,v 1.1 1994/12/15 10:57:20 jeff Exp $
+#
+# written by Jeff Gilbreth, December 1994.
+#
+#
+#
+# This PERL filter accepts specialized HTTP requests from Chimera
+# on stdin and converts them into file requests to the local cache.
+# The program then formats the results into an HTTP response sent to
+# stdout, and exits.
+#
+#
+#
+#
+#
+# Copyright 1994 by Jeff Gilbreth.
+#
+# Permission to use, copy, modify, and distribute this software and its
+# documentation for any purpose and without fee is hereby granted,
+# provided that the above copyright notice appear in all copies and that
+# both that copyright notice and this permission notice appear in
+# supporting documentation, and that the name of Jeff Gilbreth not be
+# used in advertising or publicity pertaining to distribution of the
+# software without specific, written prior permission. Jeff Gilbreth
+# makes no representations about the suitability of this software for
+# any purpose.  It is provided "as is" without express or implied
+# warranty.
+# 
+# JEFF GILBRETH DISCLAIMS ALL WARRANTIES WITH REGARD TO THIS SOFTWARE,
+# INCLUDING ALL IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS, IN NO
+# EVENT SHALL JEFF GILBRETH BE LIABLE FOR ANY SPECIAL, INDIRECT OR
+# CONSEQUENTIAL DAMAGES OR ANY DAMAGES WHATSOEVER RESULTING FROM LOSS OF
+# USE, DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR
+# OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
+# PERFORMANCE OF THIS SOFTWARE.
+#
+#
+#
+#	$Log: access_cache,v $
+# Revision 1.1  1994/12/15  10:57:20  jeff
+# Initial revision
+#
+#
+#
+#
+
+# get the required libraries
+#
+require 'getopts.pl';
+
+
+
+# make a call to the option handler...
+#
+&Getopts ('hsrn:');
+
+
+$prog = `basename $0`;
+chop $prog;
+
+
+&Usage() if ($#ARGV != -1);
+&Usage() if $opt_h;
+
+
+
+
+#
+# some defaults
+#
+$cachepath = "/homes/isri/jeff/chimera_cache";      # or whatever yours is
+$filename = "/";
+$protocol = "cache";
+$version = "1.0";
+$return_code = 200;
+$return_string = "OK";
+$return_content_type = "text/html";
+$Content_type = "application/x-www-form-urlencoded";
+$nocache = 1;
+
+
+# grab the "cacheDir" resource if it exists
+#
+chop ($xresource = `xrdb -query | grep cacheDir`);
+if ($xresource ne "") {
+	($junk, $cachepath) = split(/:\s*/, $xresource, 2);
+}
+
+# grab the environment variable, if it exists
+#
+if (defined $ENV{'CHIMERA_CACHE'}) {
+	$cachepath = $ENV{'CHIMERA_CACHE'};
+}
+
+
+
+
+
+&ProcessHTTPRequest;
+&DebugHTTPRequest 	if (defined $testmode);
+&ExtractInfo;
+&MakeCacheRequest;
+&FormatData;
+&ReturnCacheData;
+
+
+
+
+
+exit 0;
+
+
+
+
+
+
+
+#
+# INPUT routine
+#
+sub ProcessHTTPRequest {
+
+	local ($http_id, $http_code, $http_string);
+	local ($http_name, $http_version);
+	local ($uri_proto, $uri_path);
+	local ($type, $type_name, $type_value);
+	local ($f);
+	#
+	# NOTE: $uri, $MESSAGE, and @unknown_fields are no longer local
+	# 	to make them readable by the testing routine.
+
+	# format of input
+	#
+	#	GET blah
+	#	URI: cache:/cachedir
+	#	X-protocol: cache
+	#	X-hostname: host
+	#	X-port: port
+	#	X-filename: /cachedir
+	#	Content-length: ?
+	#	Content-type: ?
+	#	[blank line]
+	#	message [optional; Content-length field non-zero]
+
+
+	chop ($http = <STDIN>);
+
+	($http_id, $http_code, $http_string) = split (/\s+/, $http, 3);
+
+	($http_name, $http_version) = split (/\//, $http_id);
+
+
+
+	while (<STDIN>) {
+
+		chop ($type = $_);
+
+
+		# check for the blank line that terminates header
+		#
+		if ($type eq "") {
+
+			last;
+		}
+
+
+		# must be a field line. parse name and value
+		#
+		($type_name, $type_value) = split (/\s*:\s*/, $type, 2);
+
+		if ($type_name eq "URI") {
+
+			$uri = $type_value;
+
+			($uri_proto, $uri_path) = 
+				split (/\s*:\s*/, $uri);
+
+			if (eval '\$protocol !~ /$uri_proto/') {
+
+				&HTTPError 
+				("protocal \"$uri_proto\" not accepted as $protocol\n")
+					if (!$testmode);
+			}
+
+		}
+
+		elsif ($type_name eq "X-hostname") {
+
+			next if ($type_value eq "");
+
+			$hostname = $type_value;
+		}
+
+		elsif ($type_name eq "X-port") {
+
+			next if ($type_value eq "0");
+
+			$port = $type_value;
+		}
+
+		elsif ($type_name eq "X-filename") {
+
+			next if ($type_value eq "" || $type_value eq "/");
+
+			$filename = $type_value;
+		}
+
+		elsif ($type_name eq "X-protocol") {
+
+			$protocol = $type_value;
+		}
+
+		elsif ($type_name eq "Content-length") {
+
+			$Content_length = $type_value;
+		}
+
+		elsif ($type_name eq "Content-type") {
+
+			$Content_type = $type_value;
+		}
+
+		else {
+
+			push (@unknown_fields, "$type_name: $type_value");
+		}
+	}
+
+
+
+
+	# check for other data
+	#
+	if (defined $Content_length && $Content_length > 0) {
+
+		read(STDIN, $MESSAGE, $Content_length);
+	}
+
+	0;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+#
+# Testing Routine
+#
+sub
+DebugHTTPRequest {
+
+	$DEBUG .= "<h3>External Protocol Request</h3>\n";
+
+	$DEBUG .= "<i>$http</i>\n";
+
+	$DEBUG .= "<dl>\n";
+
+	$DEBUG .= "<dt>URI:\n<dd><b>$uri</b>\n";
+
+	$DEBUG .= "<dt>protocol:\n<dd><b>$protocol</b>\n";
+
+	$DEBUG .= "<dt>hostname:\n<dd><b>$hostname</b>\n";
+
+	$DEBUG .= "<dt>port:\n<dd><b>$port</b>\n";
+
+	$DEBUG .= "<dt>filename:\n<dd><b>$filename</b>\n";
+
+	$DEBUG .= "<dt>Content-type:\n<dd><b>$Content_type</b>\n";
+
+	$DEBUG .= "<dt>Content-length:\n<dd><b>$Content_length</b>\n";
+
+	$DEBUG .= "<dt>unknown fields:<dd><b>\n" .
+		join ("<p>\n", @unknown_fields) . "\n</b>\n";
+
+	$DEBUG .= "<dt>message:\n<dd><b>$MESSAGE</b>\n";
+
+	$DEBUG .= "</dl>\n";
+
+	$DEBUG .= "<hr>\n";
+
+	0;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+sub ExtractInfo {
+
+        local (@fpath);
+
+        # extract path and file parts from the filename
+        #
+
+	if ($filename =~ /\w\/$/) {
+		$cachepath = $filename;
+		chop $cachepath;
+
+	} else {
+        	@fpath = split('/',$filename);
+
+        	$cachefile = pop(@fpath) if (@fpath >= 1);
+		$cachepath = join('/', @fpath) if (@fpath >= 1); 
+	}
+
+        0;
+}
+
+
+
+
+
+
+
+
+#
+# LOOKUP routine
+#
+
+sub
+MakeCacheRequest {
+
+
+	local (@dir_list, $f, $found, $URL, $type_value, $type_name);
+
+
+	opendir (CACHE, "$cachepath");
+
+	# get a listing of the designated group
+	#
+	@dir_list = sort grep (!/^\./, readdir (CACHE));
+
+
+	if (defined $cachefile) {
+
+
+		$nocache = 1;
+
+		# look for desired file under path
+		#
+		foreach $f (@dir_list) {
+
+			if ($f eq $cachefile) { $found = true;last; }
+		}
+
+		if ($found) {
+
+			open (FILE, "$cachepath/$cachefile") || 
+			&HTTPError ("could not open FILE $cachefile: $!");
+
+			while (<FILE>) {
+
+				next if (/^HTTP/);
+				last if (/^\n/);
+				chop;
+				($type_name, $type_value) = 
+					split (/\s*:\s*/, $_, 2);
+
+				if ($type_name eq "X-URL") {
+					$URL = $type_value;
+				}
+				if ($type_name eq "Content-type") {
+					$Content_type = $type_value;
+				}
+				if ($type_name eq "Content-length") {
+					$Content_length = $type_value;
+				}
+
+			}
+			if ($URL eq "") {
+
+				&HTTPError("FILE $cachefile not a cache file");
+
+			} else {
+
+				$NEW_URI = $URL;
+			}
+
+			close (FILE);
+
+		} else {
+
+			&HTTPError ("FILE $cachefile not found");
+		}
+
+
+	} else {
+
+
+		# now grep the head of every file for the 
+		# appropriate info
+		#
+		foreach $f (@dir_list) {
+
+			open (HEAD, "$cachepath/$f") || 
+			&HTTPError ("$cachepath/$f: $!");
+
+			while (<HEAD>) {
+
+				next if (/^HTTP/);
+				last if (/^\n/);
+				chop;
+				($type_name, $type_value) = 
+					split (/\s*:\s*/, $_, 2);
+
+				if ($type_name eq "X-URL") {
+					$URL = $type_value;
+				}
+				if ($type_name eq "Content-type") {
+					$c_type = $type_value;
+				}
+				if ($type_name eq "Content-length") {
+					$c_length = $type_value;
+				}
+
+			}
+
+			close (HEAD);
+
+
+			$DATA .= "$URL $f $c_type $c_length\n";
+		}
+	}
+
+	closedir (CACHE);
+
+	0;
+}
+
+
+
+
+
+sub FormatData {
+
+	local ($fname, $urlname, $type, $size, @datalist);
+
+	if (!defined $cachefile) {
+
+		@datalist = split('\n', $DATA);
+		$NEWDATA .= "<title>The CACHE</title><h1>The CACHE</h1>\n";
+		$NEWDATA .= "<dl>\n";
+		foreach $l (sort @datalist) {
+			($urlname, $fname, $type, $size) = split(/\s+/, $l);
+			$NEWDATA .= "<dt>" . 
+				"<a href=\"$urlname\">" .
+				"$urlname</a><dd>\n" .
+				"<code>$fname</code><br>\n" .
+				"<b>$type</b>\n" .  
+				"<i>$size bytes</i>\n";
+
+		}
+
+		$NEWDATA .= "</dl>\n";
+	
+		$DATA = $NEWDATA;
+	}
+	else {
+		$DATA = "<h2>Loading Cache File...</h2>\n";
+	}
+
+	0;
+}
+
+
+
+
+
+
+
+
+sub ReturnCacheData {
+
+        # format of output:
+        #
+        # HTTP/1.0 200 OK
+        # Content-type: text/html
+        # Content-length: 12345
+        #
+        # DATA
+        #
+
+        $content_length = length ($DATA);
+
+	if (defined $testmode) {
+		$content_length += length($DEBUG);
+	}
+
+        print STDOUT "HTTP/$version $return_code $return_string\n";
+        print STDOUT "Content-type: $return_content_type\n";
+        print STDOUT "Content-length: $content_length\n";
+        print STDOUT "Pragma: nocache\n"	if (defined $nocache);
+        print STDOUT "URI: $NEW_URI\n"		if (defined $NEW_URI);
+        print STDOUT "\n";
+
+	print STDOUT "$DEBUG"			if (defined $testmode);
+
+        print STDOUT "$DATA";
+
+        print STDOUT "\n";
+
+        0;
+}
+
+
+
+
+
+#
+# the routine called to generate errors in HTTP format
+#
+sub HTTPError {
+
+	local(@string) = @_;
+	local($message); 
+
+	$message .= "\n" .
+		"<h1>ERROR</h1>\n" .
+		"<b>$prog:</b> " .
+		join ('', @string) . 
+		"\n\n";
+
+	$content_length = length($message);
+
+	print STDOUT "HTTP/$version $return_code  $return_string\n";
+	print STDOUT "Content-type: text/html\n";
+	print STDOUT "Content-length: $content_length\n";
+	print STDOUT "Pragma: nocache\n";
+	print STDOUT "\n";
+
+	print STDOUT "$message";
+
+	exit 1;
+}
+
+
+
+
+
+
+
+
+sub Usage {
+	
+	print STDERR "Usage:\t$prog [-h]]\n\n";
+	print STDERR "\tThis PERL filter accepts specialized\n";
+	print STDERR "\tHTTP requests from Chimera on stdin\n";
+	print STDERR "\tand converts them into requests for\n";
+	print STDERR "\tcached documents. The program then\n";
+	print STDERR "\tformats the results into an HTTP response\n";
+	print STDERR "\tsent to stdout, and exits.\n\n";
+
+	exit 1;
+}
+
+

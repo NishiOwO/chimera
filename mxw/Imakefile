@@ -1,0 +1,26 @@
+#include <../Common.tmpl>
+
+DEFINES = $(XRELEASE)
+
+INCLUDES = -I./
+
+#ifndef ultrix
+#if ProjectX > 4
+HEADERS = ScrollText.h ScrollTextP.h
+SRCS = ScrollText.c
+OBJS = ScrollText.o
+#else
+HEADERS = ScrollText.h ScrollTextP.h Porthole.h PortholeP.h
+SRCS = ScrollText.c Porthole.c
+OBJS = ScrollText.o Porthole.o
+#endif
+#else
+HEADERS = ScrollText.h ScrollTextP.h
+SRCS = ScrollText.c
+OBJS = ScrollText.o
+#endif
+
+NormalLibraryTarget(mxw, $(OBJS))
+DependTarget()
+
+install.man::

@@ -1,0 +1,51 @@
+/*
+ * options.h
+ *
+ * Copyright (C) 1994, John Kilburg.
+ *
+ * See src/copyright.h for details
+ */
+
+#define CACHE_DIR "/tmp"                        /* default cache directory */
+#define CACHE_SIZE 4000000                      /* max size of cache */
+#define CACHE_TTL 14400                         /* min time of cache entry */
+#define CACHE_CLEAN "True"                      /* cleanup on exit ? */
+#define CACHE_OFF "False"                       /* use disk cache ? */
+#define CACHE_IGNORE_EXPIRES "False"            /* ignore Expires: ? */
+#define PRINTER_NAME "lp"			/* default printer name */
+#define PRINT_COMMAND "lpr -h -P%s"		/* command to pipe to print */
+#define BOOKMARK_FILE "~/.chimera_bookmark"	/* location of bookmark file */
+#define USER_AGENT "Chimera/1.63"		/* User-Agent field for HTTP */
+#define EMAIL_COMMAND "mail %s"			/* pipe to command for mail */
+#define STATUS_UPDATE 10			/* frequency of status update*/
+#define PATH CUTILDIR 				/* default program PATH */
+#define SHOW_URL "True"                         /* show current URL ? */
+#define SHOW_TITLE "True"                       /* show current title ? */
+#define CHILD_STDERR "/dev/null"                /* stderr for children
+                                                   of chimera.  Can be
+                                                   ~/.chimera_error */
+
+/*
+ * You may need this if your /bin/sh can't handle ';' when the PATH is
+ * defined in the command line like so:
+ *
+ * PATH=$PATH:%s; %s
+ */
+/*
+#define NOSEMICOLON 1
+*/
+
+/*
+ * Define this if you want to cache documents that require authentication.
+ */
+/*
+#define CACHE_AUTH 1
+*/
+
+/*
+ * Define this if you want non-blocking connects.  This causes problems
+ * on some machines.
+ */
+/*
+#define NONBLOCKING_CONNECT 1
+*/

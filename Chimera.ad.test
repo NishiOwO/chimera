@@ -1,0 +1,11 @@
+Chimera.path: ./util
+Chimera.convertFiles: ./lib/convert
+Chimera.protocolFiles: ./lib/protocol
+Chimera.mailCapFiles: ./lib/mailcap
+Chimera.mimeTypeFiles: ./lib/mime.types
+Chimera.cacheInfoFiles: ./lib/cacheinfo
+!
+! These aren't right but are good enough for testing.
+!
+Chimera.helpURL: file:lib/help.html
+Chimera.homeURL: file:lib/home.html

@@ -1,0 +1,76 @@
+                                Chimera 1.63
+                       X11/Athena World-Wide Web Client
+                             written by John Kilburg
+
+Chimera is an X/Athena Web client for UNIX-based workstations.
+If you do not know about the Web then read the comp.infosystems.www
+newsgroup or grab the FAQ from rtfm.mit.edu using ftp.
+This program does not require Motif.
+
+There is a mailing list called (send bug reports here)
+
+bug-chimera@cs.unlv.edu
+
+If you want to join the list (receive the emails that go to bug-chimera)
+send email to
+
+bug-chimera-request@cs.unlv.edu
+
+Read INSTALL for installation instructions and hints.
+
+The Chimera distribution is made up of several parts:
+
+src            This is the source code for Chimera.  This is
+               code written by John Kilburg.
+
+lib            Run-time configuration files for Chimera.
+
+mxw            These are miscellaneous X widgets written by various
+               authors.
+
+libhtmlw       This is the HTML widget.  It was written at NCSA.  You
+               can find this code in the Mosaic-2.4 distribution.
+               Read README.NCSA for more details.
+
+util           Utility programs used by chimera.
+
+xloadimage     Functions for handling graphics images.  This code was
+               snarfed from xloadimage which is available on ftp.x.org.
+
+You should examine the files in each of these directories for
+copyright and distribution information.
+
+Following is a list of folks (in no particular order) that have contributed
+code or provided bug reports or other valuable services (this list is
+probably not complete...if you should be on it yell at me):
+
+Allen Condit (condit@isri.unlv.edu)
+Jeff Gilbreth (jeff@isri.unlv.edu)
+Greg Wohletz (greg@cs.unlv.edu)
+Kevin Grover (grover@isri.unlv.edu)
+Jay Nietling (jay@cs.unlv.edu)
+James E Ward <jew@convx1.ccit.arizona.edu>
+Jim.Rees@umich.edu (big-time contributions)
+K Chinen <k-chinen@is.aist-nara.ac.jp>
+Dimitri Vlahakis <dcv@panix.com>
+dcn@ignatz.acs.depaul.edu
+Thomas Boutell <boutell@netcom.com>
+Jim Wight <j.k.wight@newcastle.ac.uk>
+R. Stewart Ellis <ellis@nova.gmi.edu>
+Yap Kid Mun <KidMun.Yap@mel.dit.csiro.au>
+Charles Hedrick <hedrick@klinzhai.rutgers.edu>
+Lee A. Butler <butler@arl.mil>
+Nicolas Pioch <pioch@inf.enst.fr>
+Andreas.Ley@rz.uni-karlsruhe.de
+Nathan Torkington <Nathan.Torkington@vuw.ac.nz>
+Azuma OKAMOTO <lfo@sayori.dais.is.tohoku.ac.jp>
+
+Jay and Greg are the system guys for the engineering college at UNLV.
+They have done a really nice job of setting up and maintaining the
+computing environment here.  A lot of the development
+work was also done on a Linux box.  I am grateful to Linus Torvalds
+and the other folks (too numerous to mention) who have
+worked on Linux.
+
+John Kilburg
+john@cs.unlv.edu

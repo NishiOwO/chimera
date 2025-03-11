@@ -1,0 +1,335 @@
+-----------------
+Table of Contents
+-----------------
+
+Customizing the installation
+Notes for X11R4 and X11R3 Sites
+More Setup
+NeXT notes
+SOCKS notes
+Term notes
+Note for Sun users with linking problems
+Environment variables
+Inline JPEG
+app-defaults
+/bin/sh problem
+Alpha AXP OSF/1
+DEC problems
+Caching Authorized Documents
+Setting the path after changing CUTILDIR
+HAVE_xxxxxx_H
+Cache setup
+
+----------------------------
+Customizing the installation
+----------------------------
+
+It is unlikely that you will want the default setup.  There are
+three files that you should be concerned with:
+
+                        Common.tmpl
+			options.h
+			src/Chimera.ad
+
+There are only a few changes that need to be made.
+
+Common.tmpl
+------------
+
+You will almost certainly want to investigate and change this
+file.
+
+You can modify the installation directories and compiler flags
+using this file.  Don't forget to type
+
+		xmkmf -a
+
+in the toplevel directory after you modify Common.tmpl.
+
+options.h
+---------
+
+This file contains options for configuring chimera.  Some of the
+options here can also be specified at run-time while others cannot.
+You'll have to nose around in here to find out what is going on but
+you probably won't need to change anything if you are on a machine
+connected directly to the Internet.
+
+You might have to comment out some of the lines at the bottom of
+options.h to get chimera to compile on your machine.  See the
+HAVE_xxxxxx_H section of this file.
+
+src/Chimera.ad
+--------------
+
+You can change the arrangement, color, and labels by changing
+the resources in Chimera.ad.  You'll need to experiment if
+you don't like the stock settings.
+
+One of the most important changes here is the path resource.
+You should change this to a string like:
+
+Chimera.path: /local/pbm/bin:/local/viewers/bin
+
+so that all of your external viewers can be found (the PATH variable
+is automatically included so there is no need to include it or directories
+in it).
+
+Note that some X servers do not like the colors I selected.
+You can add them to your rgb database in X's lib directory
+or you can change the colors in Chimera.ad.
+
+-------------------------------
+Notes for X11R4 and X11R3 Sites
+-------------------------------
+
+If you do not have X11R5 installed then Chimera will not
+remember the scroll bar position of previous documents.
+
+The X release will be determined automatically so you shouldn't
+have to worry about it.
+
+----------
+More Setup
+----------
+
+I suggest that you use a local home page instead of, say, NCSA's
+home page.  The reason for this is because it takes time to
+access a remote home page and if the net is down it will take
+a really long time.  You should also keep the help page local.
+
+I think a local file is best.  A local server is
+OK but not quite as good.
+
+You can use the included home page but it is probably best if you create
+your own to reflect the needs of yourself or your users.
+
+You can add links to neat things like NCSA's server, the WWW
+virtual library, and CERN's server in your home document so
+that you will have good access to the most interesting bits
+of info.
+
+To change the home page at compile-time, change the definition of
+HOME_URL in Common.tmpl.  To change the home page at run-time, change
+the X resource homeURL or the shell environment variable WWW_HOME
+to whatever you want.
+
+----------
+NeXT Notes
+----------
+
+Before you type xmkmf you may need to type:
+
+export IMAKECPP=/etc/mouse-cpp
+
+or
+
+setenv IMAKECPP /etc/mouse-cpp
+
+Keep in mind that you need X installed on your machine for Chimera
+to work.
+
+-----------
+SOCKS NOTES
+-----------
+
+I don't live behind a firewall but I received instructions from
+Jennine Townsend <aimla!jennine@uunet.UU.NET> which explains
+what needs to be done.
+
+You'll need to grab the socks.cstc release from syl.dl.nec.com
+and uncomment and set SOCKSLIB and SOCKSFLAG in the Common.tmpl
+file.
+
+I can't test this so I would appreciate it if someone would
+tell me how it goes. [note: I've heard that this works]
+
+----------
+Term Notes
+----------
+
+Note: You'll need Term 2.x at least.  Chimera was last tested with
+Term 2.2.8.
+
+Chimera supports the use of "term" instead of normal socket connections,
+for those who don't have Ethernet or SLIP connections. Term can be
+used over a normal dialup shell; it can be obtained by anonymous
+FTP from sunsite.unc.edu in /pub/Linux/apps/comm/term/term, and
+it is compatible with most versions of Unix (not just Linux!).
+If you want Web and don't have SLIP, this is for you.
+
+To build Chimera+term [by hand], you must do the following:
+
+A. Edit the TERMLIB line in Common.tmpl, removing the comment-character
+at the beginning and correcting the directory specified to point to
+the directory where you built libtermnet.a when installing term. (If
+you've deleted this file, then rebuild term to recreate it.)
+I keep mine in /usr/local/lib, but you almost certainly won't
+find it there.
+
+B. Edit the TERMINC line to point at the directory containing termnet.h,
+which will probably be the same directory as TERMLIB above. Again,
+if you have deleted it, reinstall term.
+
+C. Uncomment the TERM line in options.h.
+
+- Tom Boutell (heavily edited by john because of changes in chimera)
+
+---------
+Sun Users
+---------
+
+Depending on your setup you may need to link Chimera with
+-lresolv.  If you get undefined symbol errors for functions
+name "res_*" then you will need to add
+
+-lresolv
+
+to src/Imakefile on the end of the LOCAL_LIBRARIES line.
+
+---------------------
+Environment Variables
+---------------------
+
+See the help document in lib/help.html.
+
+-----------
+Inline JPEG
+-----------
+
+You'll need to grab a package that will convert JPEG to
+PPM files like The Independent JPEG Group's JPEG software.
+To find it do an archie search for jpegsrc.  I haven't run across
+any inline JPEG files but it is bound to happen and you can do
+it with Chimera by using these instructions.
+
+From Jim.Rees@umich.edu:
+
+The problem is that you'll end up with too many colors (2^24), and chimera
+throws out the old ones after the first 256.
+
+Going through gif works since gif quantizes to 256 colors, but it's not a
+good solution.
+
+I quantize to 16 colors for grayscale, since my grayscale displays are all 4
+bit, and to 50 for color, which is what Mosaic uses.  One problem is that
+you'll get a different 50 colors for each image, so if you have lots of
+inlines on a page, you might still run out.
+
+For grayscale, the quantization should be done after converting to grayscale
+instead of before, but I haven't done that yet.  It hasn't been a problem.
+
+Here are my convert file entries for inline jpeg:
+
+mimg    ^image/jpeg |djpeg -P %s | ppmtopgm | pgmtopbm
+mimg    .jpg       |djpeg -P %s | ppmtopgm | pgmtopbm
+
+gimg    ^image/jpeg |djpeg -P -q 16 %s | ppmtopgm
+gimg    .jpg       |djpeg -P -q 16 %s | ppmtopgm
+
+cimg    ^image/jpeg |djpeg -P -q 50 %s
+cimg    .jpg       |djpeg -P -q 50 %s
+
+------------
+app-defaults
+------------
+
+To allow installation of the app-defaults into a directory that is not the
+standard place (e.g. /usr/X386/lib/X11/app-defaults, /usr/lib/X11/app-defaults,
+/local/X11R5/lib/X11/app-defaults) because you aren't the sysadmin
+or you don't want to thrash your X directory or whatever the
+XAPPLOADDIR variable is used in Common.tmpl to specify a different
+directory for the app-defaults.  To take advantage of the new location
+you will need to rename of the chimera binary, for example:
+
+	mv chimera chimera-x.xx
+
+and then create a script called chimera:
+
+#!/bin/sh
+XFILESEARCHPATH=app-defaults-dir/%N chimera-x.xx $*
+
+Don't forget to make the script executable.
+
+Thanks to Jim Wight <J.K.Wight@newcastle.ac.uk> for the suggestion.
+
+----------------
+/bin/sh problems
+----------------
+
+Apparently, some shells can't handle a semicolon when the following
+command line is given:
+
+PATH=$PATH:/somedir; command
+
+If this is the case with your shell then uncommented the line
+
+#define NOSEMICOLON 1
+
+in options.h
+
+---------------
+Alpha AXP OSF/1
+---------------
+
+Compile with -D_BSD and link with -lbsd.  This is done in
+Common.tmpl already but you will need to uncomment the lines that
+are needed.
+
+------------
+DEC problems
+------------
+
+On OSF/1 and Ultrix there is a problem with the long define in
+Common.tmpl.  The solution is to remove them from Common.tmpl and
+define them in options.h.
+
+----------------------------
+Caching Authorized Documents
+----------------------------
+
+By default, chimera does not cache authorized documents.  If you
+want to cache them then define CACHE_AUTH in options.h.
+
+Make sure that other users cannot access your cache files if you
+do this!
+
+--------
+CUTILDIR
+--------
+
+If CUTILDIR is not the same as CBINDIR then you will probably want
+to add CUTILDIR to the path resource or to your PATH environment
+variable.
+
+-------------
+HAVE_xxxxxx_H
+-------------
+
+There are a bunch of defines at the bottom of options.h that are used
+to specify what header files a machine has.  If you get compile errors
+that look something like:
+
+15: stdlib.h not found
+
+then you will need to comment out the line
+
+#define HAVE_STDLIB_H 1
+
+-----------
+Cache Setup
+-----------
+
+Chimera is configured by default to put cache files in /tmp and
+to remove the cache files when the user exits chimera.
+
+If you do not want these defaults then change the defines for
+
+CACHE_DIR
+
+and
+
+CLEAN_UP
+
+to whatever you want.  You can also change the resources
+Chimera.cacheDir and Chimera.cleanUp.

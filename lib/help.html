@@ -1,0 +1,629 @@
+<html>
+
+<title>Chimera Help</title>
+
+<h1>Chimera Help</h1>
+
+<h2>Program Info</h2>
+
+This is Chimera 1.62, written by John Kilburg (john@cs.unlv.edu)
+and others (see the README file in the chimera distribution for more info).
+The HTML widget code was originally written at
+NCSA.  Keep in mind that the HTML widget used by Chimera is a
+modified version and any problems are John's fault.
+
+<p>
+
+Click <a href=http://www.unlv.edu/chimera/>here</a> to see the chimera
+home page.  Click <a href=http://www.isri.unlv.edu>here</a> to see
+the ISRI home page.  ISRI is sponsering current development of chimera.
+
+<p>
+
+Click <a href=ftp://ftp.cs.unlv.edu/pub/chimera-misc>here</a> to
+check out additional chimera goodies (tools, possible binaries,
+beta versions,...).
+
+<h2>Bug Reports</h2>
+
+The name of the mailing list is bug-chimera@cs.unlv.edu.  If you want
+to join the list, send email to bug-chimera-request@cs.unlv.edu.  Send
+bug reports to bug-chimera@cs.unlv.edu.
+
+<p>
+
+When you send a bug report please include the version of chimera that
+you are using, the type of machine/OS you are using, and one or more
+URLs that expose the bug.
+
+<h2> Mouse Button Usage </h2>
+
+If you click on an anchor with the first mouse button then the
+document will be loaded and displayed (if possible).  If the second
+mouse button is used then Chimera will ask for a filename and save
+the document to the file.
+
+<h2> Quit </h2>
+
+Clicking on this button causes Chimera to stop execution.  It is important
+that you use this button instead of, say, control-c.
+For instance, if you do not use the Quit button to exit Chimera any changes
+you make to the list of bookmarks will not be saved.
+
+<h2> Open</h2>
+
+This command tells Chimera to display a requester for a document
+URL.  The cursor automatically warps to the text entry field so
+move movement is not required after the button is pressed.  A click
+on the cancel button on the requester causes Chimera to discard the
+requester and resume operation as before.  A click on the OK button
+causes Chimera to attempt to load the specified document.  If the
+URL is invalid or the document is unavailable then an error message
+is displayed.  If the document was successfully accessed then
+Chimera displays the document (in the case of HTML) or executes
+an external program to deal with the document.
+
+<p>
+
+You can also edit the URL display field which is located between the
+main document window and the document title display.
+
+<h2>Home</h2>
+
+When the home button is pressed the document that was first displayed
+is displayed.  This is the same as pressing Back until the first
+document is visible.
+
+<h2>Back</h2>
+
+Clicking on this button causes Chimera to ``back up'' to the previous
+document.
+This button will be deactivated if only one document is available.
+
+<h2>Source</h2>
+
+Clicking on this button causes Chimera to display the HTML source of the
+currently displayed document.
+
+<h2>Reload</h2>
+
+Clicking on this button causes Chimera to reload the current document.
+This is useful for a when the original document has changed (you are
+currently working on a project, for example) and you need to refresh
+the document.
+
+<h2>File</h2>
+
+When this button is pressed a popup window appears which can be used
+to tell chimera to save or print the currently displayed document.
+There are three text fields: Filename, Printer, and Email.  If you click on
+the Save button then the string in the Filename text field is used
+as the name of the file in which the document is saved.  If you
+click on the Print button then the string in the Printer text field
+is used to determine which printer to use for printing.  If you click on
+the Email button then the string in the Email text field is used to
+determine where to mail the document.  There is
+also a menu button which can be used to select the output type.  Note
+that when you print you must select the correct output type for
+your printer.  If you try to print HTML on a postscript printer, for
+example, then nothing will happen.  To print HTML source on a postscript
+printer you will first have to save the document as HTML and then
+use a utility (such as a2ps) to convert the HTML source to postscript
+which can then be printed on the printer.
+
+<h2>Help</h2>
+
+Clicking on this button causes Chimera to display the document you are
+reading now.
+
+<h2> Bookmark </h2>
+
+When you click on this button a list of bookmarks pops up.  To view a
+document which has a bookmark just double click on the bookmark.
+Along the button of the bookmark list window is a row of four buttons:
+open, dismiss, add, and delete.  The open button opens the currently
+highlighted bookmark.  The dismiss button hides the bookmark list.
+The add button adds the title of the current document to the 
+bookmark list (the URL is used if there is no title).  The
+delete button deletes the currently highlighted bookmark.
+
+<h2> Search </h2>
+
+When the search button is pressed a requester appears which allows
+you to enter a string for Chimera to find.  If the string is found
+then the document position is changed so that the string is
+viewable and the string is highlighted.  Chimera only allows
+forward, case-insensitive searches.  If the search reaches the
+end of the page, it will wrap to the top of the document.
+
+<h2>Cancel</h2>
+
+The cancel button can be used to stop the loading of the currently
+loading document.  Note that cancel doesn't work while chimera tries
+to make a connection to a remote host.  It only works once the
+transfer has started (most of the time).
+
+<h2> Uniform Resource Locators (URLs) </h2>
+
+URLs are used by Web clients to access a document.  URLs describe
+the access method to be used to access the file, the Internet hostname
+where the document is located, an optional port number on the host,
+and the location of the document on the host.
+
+The format is:
+
+<p>
+
+access_method://hostname:optional_port/filename
+
+<p>
+
+Usually the port number is not used except when someone is running a
+server on a non-standard port.  Do not specify the second colon
+if the port number is omitted.
+
+<p>
+
+This may sound complicated but here are a few examples to
+(hopefully) make things clearer:
+
+<p>
+
+Gopher server at UNLV - gopher://gopher.unlv.edu/
+
+<p>
+
+Web server at UNLV - http://www.unlv.edu/default.html
+
+<p>
+
+ftp server at UNLV - ftp://ftp.cs.unlv.edu/
+
+<p>
+
+Local file test.html - file:test.html
+
+<h2>Hints</h2>
+
+Chimera disconnects from a server as soon as it gets a document.  While this
+is efficient in that it allows the user to browse data off line, it
+makes it difficult to continue access on busy servers.  An example
+(a really good one, actually), is ftp access on wuarchive.  Wuarchive
+is a very busy ftp server so it is sometimes difficult to get a
+connection.  The problem is that if you get a directory listing and then
+select one of the items in the listing you may get a message like:
+
+<p>
+
+Could not load document ftp://wuarchive.wustl.edu/pub
+
+<p>
+
+This probably means that there are too many people on wuarchive.  In this
+case just press ``Back'' and try again.
+
+<p>
+
+When you open a local file be sure to use
+the file access method.  The reason for this is that if you give
+a partial URL the current document will be used to complete
+the URL.  If you use file: then the current document is not used
+for context.
+
+<p>
+
+If for some reason there is a document that will not load correctly
+try doing a reload.  If chimera was not configured correctly for
+some reason, it is possible for the cache to be incorrectly
+processed.  After verifying the configuration, press Reload to
+make sure that the cache is processed correctly.
+
+<h2> Keyboard Shortcuts </h2>
+
+<pre>
+Space - scroll forward
+b     - scroll backward
+h     - home
+u     - back
+l     - reload
+?     - help
+q     - quit
+d     - source
+o     - open
+f     - file
+s     - search
+m     - bookmark
+</pre>
+
+<h2>Environment variables</h2>
+
+NOTE: The environment variables of the form CHIMERA* may go away at any
+time.
+
+<p>
+
+Chimera uses the following environment variables
+
+<pre>
+WWW_HOME               This is used to specify the first document to be
+                       loaded.  X resource is homePage.
+
+USER                   Used to determine the username of the user running
+                       chimera.
+
+PRINTER                This is used by chimera to determine the default
+                       printer.  X resource is printerName.
+
+EMAIL                  Email address used for anonymous FTP.  This is needed
+                       for users of TERM.
+
+http_proxy             This is used to specify the server to use for
+                       proxied HTTP requests.  The format is the
+                       same as an HTTP URL.  For example,
+                       http://firewall.blah.edu/
+
+gopher_proxy           This is used to specify the server to use for
+                       proxied Gopher requests.  The format is the same
+                       as an HTTP URL.  For example,
+                       http://firewall.mumble.com/
+
+ftp_proxy              This is used to specify the server to use for
+                       proxied FTP requests.  The format is the same
+                       as an HTTP URL.  For example,
+                       http://foo.bar.ca/
+
+wais_proxy             This is used to specify the server to use for
+                       proxied WAIS requests.  The format is the same
+                       as an HTTP URL.  For example,
+                       http://barp.nv.us/
+
+no_proxy               This is a comma separated list of domains that
+                       should not be proxied.
+
+all_proxy              This is the default proxy host for all protocols.
+</pre>
+
+<h2>X Resources</h2>
+
+Here is a list of Chimera-specific X resources:
+
+<pre>
+convertFiles           A colon separated list of files that describe the
+                       converters.
+
+homeURL                URL of the first document to load.
+
+helpURL                URL of the help document.
+
+path                   A colon separated list of directories to search
+                       for viewer and conversion programs.
+
+showURL                Boolean variable used to specify whether or not the
+                       URL should be displayed on the screen.
+
+showTitle              Boolean variable used to specify whether or not
+                       the title should be displayed on the screen.
+
+button1Box             A comma separated list of buttons to appear on the
+                       first button row.  Possible button names are quit,
+                       open, home, back, source, reload, file, help,
+                       bookmark, search, and cancel.
+
+button2Box             A list of buttons to appear on the second button
+                       row.
+
+printerName            Used to specify the name of the default printer.
+
+cacheOff               If True then chimera will not cache documents.
+                       Performance falls way off if you set this to true.
+
+cacheDir               This is used to specify the directory of the default
+                       cache.  Chimera will not create the
+                       directory if it does not exist and caching will not
+                       occur.
+
+cacheTTL               This specifies the time-to-live for the default cache.
+                       If a document is accessed and the cache entry for that
+                       document is more than cacheTTL seconds then the
+                       document is reloaded from the source.  If zero then
+                       documents are never reloaded (unless the reload
+                       button is pressed).
+
+cacheSize              This specifies the maximum size of the default cache
+                       in bytes.
+                       If the maximum size is exceeded then the least
+                       recently accessed cache document is removed
+                       to make room.  If zero then the cache is allowed to
+                       grow to any size.
+
+cacheClean             If True then chimera will remove the files from the
+                       default cache that it creates when it exits.
+
+mimeTypeFiles          A colon separated list of files that map file
+                       extensions to MIME content-types.
+
+mailCapFiles           A colon separated list of MIME mailcap files to be used
+                       by chimera.
+
+bookmarkFile           The location of the bookmark file.
+
+protocolFiles          A colon separated list of files that describe the
+                       programs to be used for handling protocols.
+
+statusUpdate           The number of times to update the download status
+                       per read (or something).  Setting this to zero
+                       gives the most updates while higher numbers give
+                       fewer updates.
+
+inPort                 The port number that chimera listens on for
+                       incoming information from other programs.
+                       By default, this is set to zero which disables
+                       the feature.
+
+languageDB             Specifies the language database file.  The language
+                       database is a file with a name/value pair per line.
+                       The name and value are separated by a colon.
+
+httpProxy              HTTP proxy URL.
+
+gopherProxy            Gopher proxy URL.
+
+ftpProxy               FTP proxy URL.
+
+waisProxy              WAIS proxy URL.
+
+nntpProxy              NNTP proxy URL.
+
+newsProxy              News proxy URL.
+
+urnProxy               URN proxy URL.
+
+noProxy                Domains with no proxy.
+
+allProxy               Used to specify the default proxy for all protocols.
+
+maxColors              Specify the maximum colors that a single inline
+                       image can have.
+
+delayImageLoads        This determines whether or not chimera delays loading
+                       images.  If Chimera*delayImageLoads is True then
+                       chimera will not download images until the user
+                       clicks on the icon that is located in place of the
+                       image.
+
+cacheInfoFiles         It is a colon delimited list of cache info files.
+
+cacheIgnoreExpires     If this is set to True then chimera will ignore
+                       'expires' data from the information server.
+</pre>
+
+<h2>Configuration Files</h2>
+
+There are five different types of files that can be used to change
+Chimera's behavior: mailcap, MIME Types, convert, protocol, and cacheinfo.
+
+<h3>Mailcap</h3>
+
+The mailcap file is used by MIME-capable applications to determine how
+to display certain file types.  For example,
+
+<pre>
+image/*; xv %s
+audio/basic; playaudio %s
+</pre>
+
+tells chimera to use the program 'xv' to display all images and to use
+the program playaudio (a wrapper for cat) to play basic audio files.
+You can specify multiple mailcap files by using the Chimera.mailCapFiles
+resource.  For example,
+
+<pre>
+Chimera.mailCapFiles:  ~/.mailcap:/local/infosys/lib/mailcap
+</pre>
+
+The entries in the mailcap files at the head of the list take precedence
+over the following files.
+
+<p>
+
+Note that mailcap entries can have other fields delimited by semi-colons.
+Chimera currently ignores all but the first two fields.
+
+<h3>MIME Types</h3>
+
+The mime.types file is used to map filename extensions to MIME content
+types.  For example,
+
+<pre>
+text/plain            .txt .text
+image/gif             .gif
+image/jpeg            .jpg .jpeg
+</pre>
+
+You can specify the location of mime.types files using the
+Chimera.mimeTypeFiles.  For example,
+
+<pre>
+Chimera.mimeTypeFiles: ~/.mime.types:/local/infosys/lib/mime.Types
+</pre>
+
+<h3>Convert</h3>
+
+Convert files are used to tell chimera how to convert certain types
+of files to other types.  For example, convert entries are used to
+convert Postscript to PNM files for display as inline images.  The convert
+file is also used to decompress compressed files.
+
+<p>
+
+An entry in the convert file is a single line of text of the form:
+
+<pre>
+usage in-content out-content command
+</pre>
+
+The 'usage' field is used to specify when the convert entry is to be used.
+The usage field can be one of
+<ul>
+<li>inline
+<li>any protocol (i.e. http, ftp, ...)
+<li>any transfer or content encoding (usually x-gzip or x-compress)
+<li>* (matches any protocol but not 'inline')
+</ul>
+
+Entries with 'inline' are only used for converting inline images.
+Protocol entries are only used for a specific protocol (for example,
+'ftp' is only used when a document was downloaded from an ftp server).
+
+Entries with '*' can be used with any protocol or transfer/content encoding.
+
+For example, you can specify the usage to be 'inline, the 'in-content' to
+be 'application/postscript' and the 'out-content' to be 'image/gif' and the
+command to be
+'pstopxm gif8 %s' so that Postscript files can be used as inline images.
+
+<p>
+
+You can specify the location of several convert files with the
+Chimera.convertFiles resource variable.  For example:
+
+<pre>
+Chimera.convertFiles: ~/.chimera_convert:/local/infosys/lib/convert
+</pre>
+
+<p>
+
+In all cases, chimera saves the data in a temporary file and passes
+the name as an argument to the command.  Chimera expects the command
+to output the converted data on stdout.
+See the convert file included with the chimera distribution for examples.
+
+<h3>Protocol</h3>
+
+The protocol files is used to specify external protocol programs for
+chimera.  The format for protocol file entries is
+
+<pre>
+protocol_name        command_name
+</pre>
+
+The protocol name can be anything you want as long as it doesn't
+include white space.  The command name is the <bold>full</bold> path
+name of the command.  This is inconvenient but will work for now and
+will be changed in the future to utilize the PATH environment variable
+and/or the Chimera.path X resource.
+
+<p>
+
+The command should expect to receive, on stdin, an HTTP request
+which gives information about the location of the desired document.
+The program will know that chimera is sending data when a 'Content-length'
+field is included in the header and the length is greater than 0.
+For example, here is a typical header:
+
+<pre>
+GET /something HTTP/1.0
+User-Agent: Chimera/1.62
+Accept: */*
+URI: news:comp.infosystems.announce
+X-protocol: news
+X-hostname:
+X-port: 0
+X-filename: comp.infosystems.announce
+
+</pre>
+
+The first line can be ignored (it isn't really needed) but it is
+kept around because that is what HTTP requires.
+Note that the fields can arrive in any order and some may be missing.
+A port value of 0 is used to indicate to the protocol that it is to use
+the default port.  Also note that a field may be left blank in which case
+the program is expected to pick a "reasonable" default or return an
+error message.
+
+<p>
+
+Here is an example of forms data in a request:
+
+<pre>
+POST /mumble HTTP/1.0
+User-Agent: Chimera/56.34
+Accept: */*
+URI: news:alt.bogus.whimpering
+Content-type: x-www-form-urlencoded
+Content-length: 46
+X-protocol: news
+X-hostname:
+X-port: 0
+X-filename: alt.bogus.whimpering
+
+field1=mumble&field2=blah&field3=barp&field4=
+</pre>
+
+<p>
+
+Once the program has collected its data it should output the data with
+an HTTP header prepended.  For example,
+
+<pre>
+HTTP/1.0 999 Ooops
+Content-type: text/plain
+Content-length: 42
+
+You specified a bogus newsgroup.  Go away.
+</pre>
+
+There must be a blank line between the header and the data.  You can use
+the 'Location' or 'URI' fields to specify alternate URLs (or whatever
+they're called now) for Chimera to load.  At the very minimum you
+should include the Content-type and Content-length fields.
+
+<p>
+
+You can also use the 'Pragma' field to provide hints about how to
+handle the document.  Currently, 'nocache' and 'nothing' is supported.
+For example,
+
+<pre>
+Pragma: nocache
+</pre>
+
+If 'nocache' is present then chimera will not cache the document
+which is useful for constantly changing information.
+
+If 'nothing' is present then chimera treats the returned document as
+a null document and nothing happens.
+
+<h3>Cache Info</h3>
+
+A cache info file is used to define the caches for chimera to use.
+Lines that have as the first character '#' are ignored.  A cache
+entry has the following fields:
+
+<pre>
+directory domain size TTL clean
+</pre>
+
+The directory field is the name of the directory where the cache files
+are stored.  More than one cache can share the same directory.  The
+domain field is an Internet domain name.  This is used to
+determine which documents are put in the cache.  An asterick (*) means
+that all domains are stored in that cache.  The size field is
+used to specify the maximum size of the cache.  The TTL field is used
+to specify the time-to-live value for the documents in the cache.
+The clean field is used to specify whether or not chimera should remove
+all of the cache files before it exits.  See the lib/cacheinfo file
+for details.
+
+<p>
+
+There is a default cache in case a cache info file is not available
+which is defined using cacheTTL, cacheDir, cacheSize, and cacheClean.
+
+<h2>Slow Network Connections</h2>
+
+If you have a slow network connection then you may want to enable
+delayed inline image loads.  Set the X resource Chimera*delayImageLoads
+to True so that inline images are not downloaded.
+
+</html>

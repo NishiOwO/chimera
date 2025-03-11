@@ -1,0 +1,30 @@
+#!/bin/sh
+
+#PWD=`pwd`
+#cat > Chimera.ad.test << _EOF_
+#Chimera.path: $PWD/util:/local/pbm/bin
+#Chimera.convertFiles: $PWD/lib/convert
+#Chimera.protocolFiles: $PWD/lib/protocol
+#Chimera.mailCapFiles: $PWD/lib/mailcap
+#Chimera.mimeTypeFiles: $PWD/lib/mime.types
+#Chimera.cacheInfoFiles: ~/.chimera_cacheinfo:$PWD/lib/cacheinfo
+#Chimera.helpURL: file:$PWD/lib/help.html
+#Chimera.homeURL: file:$PWD/lib/home.html
+#_EOF_
+
+XFILESEARCHPATH=src/Chimera.ad
+XUSERFILESEARCHPATH=Chimera.ad.test
+export XFILESEARCHPATH XUSERFILESEARCHPATH
+
+if [ "$1" = "d" ]
+then
+   cd src
+   if [ -f ../core ]
+   then
+     gdb ./chimera ../core
+   else
+     gdb ./chimera
+   fi
+else
+   src/chimera $@
+fi

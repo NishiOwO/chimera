@@ -1,0 +1,35 @@
+#include <../Common.tmpl>
+
+DEFINES = $(XRELEASE) $(CDEFINES) $(CSOCKS) $(CTERM)
+
+INCLUDES = -I../libhtmlw -I../mxw $(CTERMINC) -I../ -I../xloadimage
+
+SRCS = main.c url.c net.c ftp.c convert.c gopher.c http.c  \
+       filepop.c strpop.c bookmark.c util.c inline.c lister.c \
+       document.c local.c widget.c cache.c mime.c input.c md5.c auth.c \
+       fallback.c lang.c stringdb.c
+
+SOBJS = url.o net.o ftp.o gopher.o http.o  \
+	util.o document.o local.o cache.o mime.o input.o \
+	md5.o auth.o lang.o stringdb.o
+
+XOBJS = filepop.o strpop.o bookmark.o inline.o lister.o widget.o convert.o \
+        fallback.o
+
+LOCAL_LIBRARIES = -L../mxw -lmxw -L../libhtmlw -lhtmlw \
+                  -L../xloadimage -lloadimg \
+                  $(XAWLIB) $(XTOOLLIB) $(XMULIB) $(XLIB) \
+                  $(CSOCKSLIB) $(CTERMLIB)
+
+LOCAL_DEPLIBS = ../mxw/libmxw.a ../libhtmlw/libhtmlw.a \
+                ../xloadimage/libloadimg.a
+
+AllTarget(chimera)
+
+NormalProgramTarget(chimera, main.o $(XOBJS) $(SOBJS), $(LOCAL_DEPLIBS), $(LOCAL_LIBRARIES), MyNull)
+
+InstallProgram(chimera,$(CBINDIR))
+InstallManPage(chimera,$(CMANDIR))
+InstallAppDefaults(Chimera)
+
+DependTarget()

@@ -1,0 +1,18 @@
+#!/bin/sh
+#
+if [ ! "$1" = "" ]
+then
+        read hostname portno username password < $1
+        if [ ! "$username" = "" ]
+        then
+                if [ "$password" = "" ]
+                then
+                        echo When connected, login as $username
+                else
+                        echo When connected, login as $username with password $password
+                fi
+        fi
+        echo You may need to press Return to "wake up" the other computer
+        echo when you are connected.
+        telnet $hostname $portno
+fi

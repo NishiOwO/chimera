@@ -1,0 +1,17 @@
+#define IHaveSubDirs
+#define PassCDebugFlags 'CDEBUGFLAGS='
+
+SUBDIRS = libhtmlw mxw xloadimage src lib util
+
+MakeSubdirs($(SUBDIRS))
+InstallSubdirs($(SUBDIRS))
+DependSubdirs($(SUBDIRS))
+CleanSubdirs($(SUBDIRS))
+MakefileSubdirs($(SUBDIRS))
+InstallManSubdirs($(SUBDIRS))
+
+myclean:
+	$(RM) Common.tmpl options.h Makefile Makefile.bak make.err make.out
+	for i in $(SUBDIRS); do \
+		$(RM) $$i/Makefile $$i/Makefile.bak; \
+	done

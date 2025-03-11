@@ -1,0 +1,21 @@
+#
+# use in-content-type out-content-type command
+#
+
+# Conversions for inline images
+inline application/postscript image/gif pstopxm gif8 %s
+
+# just do a download
+ftp application/x-compress * none
+ftp application/x-gzip * none
+
+# Deal with transfer/content encodings
+x-compress * * zcat < %s
+x-gzip * * zcat < %s
+
+# Misc. conversions
+* text/x-compress-html text/html	zcat < %s
+* text/x-gzip-html text/html		zcat < %s
+* message/ text/html			echo '<plaintext>'; cat %s
+* x-unknown/x-unknown text/html		echo '<plaintext>'; cat %s
+* application/news-transmission text/html echo '<plaintext>'; cat %s

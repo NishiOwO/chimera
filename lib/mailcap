@@ -1,0 +1,21 @@
+application/x-telnet;	xterm -e dotelnet %s
+application/x-tn3270;	xterm -e do3270 %s
+
+#
+text/x-dvi;		xdvi %s 2> /dev/null
+
+#
+application/postscript; ghostview %s 2> /dev/null
+application/x-dvi;	xdvi %s 2> /dev/null
+
+#
+image/x-fits;           saoimage -fits %s 2> /dev/null
+image/x-xwindowdump;	xwud -in %s 2> /dev/null
+image/x-xbitmap;	xwud -in %s 2> /dev/null
+image/*;		xv %s 2> /dev/null
+
+#
+video/mpeg;		mpeg_play %s 1>&2 2> /dev/null
+
+#
+audio/basic;		playaudio %s 2> /dev/null

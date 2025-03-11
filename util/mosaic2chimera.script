@@ -1,0 +1,20 @@
+#!/bin/sh
+#
+# Converts Mosaic hotlist files to Chimera bookmark files.
+#
+# Anthony Starks <ajs@merck.com>
+#
+
+if [ "$1" = "" ]
+then
+	echo "Usage: m2c ~/.mosaic-hostlist-default > ~/.chimera_bookmark"
+	exit 1
+fi
+
+awk ' NR > 2 { 
+	if (NR % 2 != 0) printf "%s ", $1
+	else
+		print
+	}' $*
+
+exit 0

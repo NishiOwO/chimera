@@ -1,0 +1,8 @@
+This is a collection of miscellaneous X widgets.
+
+ScrollText: This is from the aXe editor by
+            Jim Wight <j.k.wight@newcastle.ac.uk>
+
+Porthole:   This is from the Xaw library.  It is here because
+            the X11R[3-4] Xaw doesn't have it.  Written by Jim Fulton,
+            MIT X Consortium.

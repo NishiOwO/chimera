@@ -1,0 +1,46 @@
+-------------------------
+INSTALLATION INSTRUCTIONS
+-------------------------
+
+You will need:
+
+	- A chimera distribution (ftp.cs.unlv.edu:/pub/chimera)
+	- netpbm or pbmplus (ftp.isri.unlv.edu:/pub/mirror/netpbm)
+
+Optional:
+
+	- jpegsrc (ftp.isri.unlv.edu:/pub/mirror/jpegsrc)
+	  If you want chimera to be able to handle JPEG inline images
+        - ghostscript and ghostview (aeneas.mit.edu:/pub/gnu)
+          If you want to be able to view downloaded postscript or have
+          inline postscript images.
+        - xv, xloadimage, or other GIF/JPEG/TIFF/... viewer to be able
+          to view downloaded image files.
+        - mpeg_play to able to view downloaded MPEG files.
+
+To compile chimera, type:
+
+			cp Common.tmpl.dist Common.tmpl
+			cp options.h.dist options.h
+
+			# for X11R5 or higher
+			xmkmf -a
+                        make
+
+			# for X11R4
+                        xmkmf
+			make Makefiles depend clean all
+
+If the compile was success, you can test chimera by typing
+
+			test-chimera
+
+If the test worked OK, you can install chimera by typing
+
+			make install
+
+You can use the '-n' flag with make to verify that everything will
+work OK.
+
+I suggest that you look at Common.tmpl and options.h to make sure that the
+settings look OK to you.

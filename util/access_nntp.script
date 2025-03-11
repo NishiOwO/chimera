@@ -1,0 +1,850 @@
+#!/local/perl/bin/perl
+#
+# $Id: access_nntp,v 1.7 1994/08/03 07:17:26 jeff Exp jeff $
+#
+# written by Jeff Gilbreth, June 20 1994.
+#
+# socket code taken from `urlsnarf', written by Allen Condit.
+#
+#
+# This PERL filter accepts specialized HTTP requests from Chimera
+# on stdin and converts them into NNTP requests to the local server.
+# The program then formats the results into an HTTP response sent to
+# stdout, and exits.
+#
+#
+#
+#
+#
+# Copyright 1994 by Jeff Gilbreth.
+#
+# Permission to use, copy, modify, and distribute this software and its
+# documentation for any purpose and without fee is hereby granted,
+# provided that the above copyright notice appear in all copies and that
+# both that copyright notice and this permission notice appear in
+# supporting documentation, and that the name of Jeff Gilbreth not be
+# used in advertising or publicity pertaining to distribution of the
+# software without specific, written prior permission. Jeff Gilbreth
+# makes no representations about the suitability of this software for
+# any purpose.  It is provided "as is" without express or implied
+# warranty.
+# 
+# JEFF GILBRETH DISCLAIMS ALL WARRANTIES WITH REGARD TO THIS SOFTWARE,
+# INCLUDING ALL IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS, IN NO
+# EVENT SHALL JEFF GILBRETH BE LIABLE FOR ANY SPECIAL, INDIRECT OR
+# CONSEQUENTIAL DAMAGES OR ANY DAMAGES WHATSOEVER RESULTING FROM LOSS OF
+# USE, DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR
+# OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
+# PERFORMANCE OF THIS SOFTWARE.
+#
+#
+#
+#	$Log: access_nntp,v $
+# Revision 1.7  1994/08/03  07:17:26  jeff
+# added the log
+#
+#
+#
+
+
+
+
+# make a call to the option handler...
+#
+require 'getopts.pl';
+&Getopts ('hsrn:');
+
+
+$prog = `basename $0`;
+chop $prog;
+
+
+&Usage() if ($#ARGV != -1);
+&Usage() if $opt_h;
+
+
+
+
+#
+# some defaults
+#
+$version = "1.0";
+$hostname = "news.cs.unlv.edu";		# or your local news server
+($name, $aliases, $port, $proto) = getservbyname("nntp", "tcp");
+$filename = "/";
+$protocol = "nntp";
+$return_code = 200;
+$return_string = "OK";
+$content_type = "text/html";
+$history_file = "$ENV{'HOME'}/.access_nntp_rc";
+$newsrc = "$ENV{'HOME'}/.newsrc";
+
+
+
+if (defined $opt_n) {
+	$hostname = $opt_n;
+}
+
+
+
+&ProcessHTTPRequest;
+&GetHistory   if ($opt_r);
+&MakeNNTPRequest;
+&FormatData;
+&ReturnHTTPData;
+
+
+
+if ($opt_r && defined %history) {
+	dbmclose (%history);
+}
+
+
+
+exit 0;
+
+
+
+#
+# INPUT routine
+#
+
+sub ProcessHTTPRequest {
+
+	# format of input - headers may be in any order, or not present or blank
+	#
+	#  BLAH URI HTTP/1.0
+	#  User-Agent: chimera/1.60
+	#  Accept: *.*
+	#	URI: nntp://host/newsgroup/article#
+	#	X-protocol: nntp
+	#	X-hostname: host
+	#	X-port: port
+	#	X-filename: /newsgroup/article
+	#	message [optional]
+	#	[blank line]
+
+
+	chop ($http = <STDIN>);
+
+	($http_cmd, $http_uri, $http_id) = split (/\s+/, $http, 3);
+
+	($http_name, $http_version) = split (/\//, $http_id);
+
+	if ($http_name ne "HTTP") {
+
+		&HTTPError ("protocol \"$http_name\" not accepted\n");
+	}
+
+	if ($http_version != $version) {
+
+		&HTTPError ("invalid HTTP protocol version: $http_version\n");
+	}
+
+	# check HTTP codes here
+	#
+	#if ($http_code < 200 || $http_code >= 300) {
+#
+		#&HTTPError ("HTTP error: $http_code  $http_string\n");
+	#}
+
+
+
+	#chop ($uri = <STDIN>);
+
+	#($uri_name, $uri_proto, $uri_path) = split (/\s*:\s*/, $uri);
+
+
+
+	# maybe check that the $uri_name is "URI"?
+	#	(is there some guaranteed order to the http info?)
+
+#	if ($uri_proto ne "nntp") {
+#
+#		&HTTPError ("protocal \"$uri_proto\" not accepted for URIs\n");
+#	}
+
+
+	while (<STDIN>) {
+
+		chop ($type = $_);
+
+
+		# check for the blank line that terminates input
+		#
+		if ($type eq "") {
+
+			last;
+		}
+
+
+		# check for non-field lines 
+		#
+		if ($type !~ /^[\w-]+\s*:/) {
+
+			$MESSAGE .= $_;
+			next;
+		}
+
+		# must be a field line. parse name and value
+		#
+		($type_name, $type_value) = split (/\s*:\s*/, $type, 2);
+
+		if ($type_name eq "X-hostname") {
+
+			next if ($type_value eq "");
+
+			$hostname = $type_value;
+		}
+
+		elsif ($type_name eq "URI") {
+
+			($uri_proto, $uri_path) = split (/\s*:\s*/, $type_value);
+
+			if ($uri_proto ne "nntp") {
+
+				&HTTPError ("protocal \"$uri_proto\" not accepted for URIs\n");
+			}
+
+		}
+
+		elsif ($type_name eq "X-port") {
+
+			next if ($type_value eq "0");
+
+			$port = $type_value;
+		}
+
+		elsif ($type_name eq "X-filename") {
+
+			next if ($type_value eq "" || $type_value eq "/");
+
+			$filename = $type_value;
+		}
+
+		elsif ($type_name eq "X-protocol") {
+
+			$protocol = $type_value;
+		}
+
+		else {
+
+			push (@unknown_fields, $type_name);
+		}
+	}
+
+
+	#print STDERR "HTTP\tcode:$http_code\tstring:$http_string\n" 
+		#if (defined $DEBUG);
+
+	print STDERR "URI\tprotocol:$uri_proto\tpath:$uri_path\n" 
+		if (defined $DEBUG);
+
+
+	if (defined $protocol) {
+
+		print STDERR "protocol = $protocol\n" 
+			if (defined $DEBUG);
+	}
+
+	if (defined $hostname) {
+
+		print STDERR "hostname = $hostname\n" 
+			if (defined $DEBUG);
+	}
+
+	if (defined $port) {
+
+		print STDERR "port = $port\n" 
+			if (defined $DEBUG);
+	}
+
+	if (defined $filename) {
+
+		print STDERR "filename = $filename\n" 
+			if (defined $DEBUG);
+	}
+
+#Don't print all the fields that we don't recognise -- we expect quite a lot 
+	#if (defined @unknown_fields) {
+
+		#foreach $f (@unknown_fields) {
+
+			#print STDERR "unknown attribute: \"$f\"\n"
+				#if ($f ne "");
+		#}
+	#}
+
+	if (defined $MESSAGE) {
+
+		print STDERR "message:\n$MESSAGE"
+			if (defined $DEBUG);
+	}
+
+
+
+
+
+
+
+
+	# parse the url
+	#
+	#	somewhat unnecessary, since the X-extensions already
+	#	give us everything parsed.
+	#
+
+#	@url = split(/\/{2}/, $uri_path);
+#
+#	print STDERR "url: ";
+#	foreach $p (@url) {
+#
+#		print STDERR "$p\n"; 
+#	}
+
+
+
+
+	$temp = $filename;
+	while ($temp =~ s/\/([^\/]+)//) {
+
+		push (@newspath, $1);
+	}
+
+
+	$group = shift(@newspath) if (@newspath >= 1);
+	$article = shift(@newspath) if (@newspath >= 1);
+
+	0;
+}
+
+
+
+
+
+
+
+
+
+
+
+#
+# a .newsrc clone
+#
+
+sub
+GetHistory {
+
+	local($key, $entry);
+
+	if (! dbmopen (%history, $history_file, undef)) {
+
+		dbmopen (%history, $history_file, 0600);
+
+		if (open (RC, "<$newsrc")) {
+
+			print STDERR "creating history file from '$newsrc'.\n"; 
+
+			while (<RC>) {
+
+				chop;
+
+				($key, $entry) = split(/[!:]\s*/, $_, 2);
+				print STDERR "[$key] -> {$entry}\n";
+
+				$history{$key} = $entry;
+			}
+
+		} else {
+
+			warn
+			"unreadable '$newsrc': $!.  starting from scratch...\n";
+		}
+	}
+}
+
+
+
+
+
+
+
+#
+# LOOKUP routine
+#
+
+sub MakeNNTPRequest {
+
+	$server = $hostname;
+
+	# connect to the server
+	#
+	local($sockaddr,$here,$there,$response,$tries) = ("Snc4x8");
+	$here  = pack($sockaddr, 2, 0, &getaddress("localhost"));
+	$there = pack($sockaddr, 2, $port, &getaddress($server));
+	&HTTPError ("socket: $!") if (!socket(N,2,1,6));
+	&HTTPError ("connect: $!") if (!connect(N,$there));
+	select(N);       $| = 1;                # make unbuffered
+	select(STDOUT);
+
+	# check the response to the initial connection
+	#
+	$accept = <N>;
+	($accept_code, $accept_string) = split (/\s+/, $accept, 2);
+	if ($accept_code >=300) {
+	
+		&HTTPError
+		("initial connect problem: $accept_code $accept_string");
+	}
+
+
+	if (defined $group) {
+
+		# request info on the desired group
+		#
+		$response_string = &SubRequest ("GROUP $group");
+
+
+		# process the group info
+		#
+		($grp_amount, $grp_start, $grp_end) = 
+			split (' ', $response_string);
+
+
+
+		if (defined $article) {
+
+			# first, we make the desired article the
+			# current one. then we get the numbers 
+			# of the previous and next articles.
+			#
+			# after all that, we then get the desired article
+			#
+			$response_string = &SubRequest ("STAT $article");
+
+			($response_code, $response_string) = 
+				&CondSubRequest ("LAST");
+
+			if ($response_code < 300) {
+				($prev_article) = split (' ', $response_string);
+			}
+
+			$response_string = &SubRequest ("STAT $article");
+
+			($response_code, $response_string) = 
+				&CondSubRequest ("NEXT");
+
+			if ($response_code < 300) {
+				($next_article) = split (' ', $response_string);
+			}
+			
+			$request = "ARTICLE $article";
+		}
+		else {
+
+			# get the list of articles
+			#
+			$request = "XHDR subject ${grp_start}-${grp_end}";
+		}
+
+		# make the article request
+		#
+		$response_string = &SubRequest ("$request");
+
+
+	}
+	else {
+
+		# no group specified, get the WHOLE list
+		#
+		$response_string = &SubRequest ("LIST");
+
+	}
+
+	# grab the data provided. look for the end-marker 
+	# line with a single period 
+	#
+	$line = <N>;
+	while ($line !~ /^\./) {
+
+		$DATA .= $line;
+		$line = <N>;
+	}
+
+	# close the nntp connection
+	#
+	print N "QUIT\n";
+
+	0;
+}
+
+
+
+
+
+
+# this little routine sends requests to the nntp server
+# and checks the response code for errors. if it is 
+# successful, we only need the $response_string
+#
+sub SubRequest {
+
+	local ($request) = @_;
+	local ($response, $response_code, $response_string);
+
+	print N "$request\n";
+	chop ($response = <N>);
+	($response_code, $response_string) = split (' ', $response, 2);
+	if ($response_code >= 300) {
+
+		&HTTPError
+		("bad request: \"$request\": $response_code ",
+		"$response_string");
+	}
+
+	$response_string;
+}
+
+
+
+# this little routine sends requests to the nntp server
+# and checks the response code for errors. if it is 
+# successful, we should get the $response_code, for 
+# further checking of codes, and the $response_string.
+#
+sub CondSubRequest {
+
+	local ($request) = @_;
+	local ($response, $response_code, $response_string);
+
+	print N "$request\n";
+	chop ($response = <N>);
+	($response_code, $response_string) = split (' ', $response, 2);
+	if ($response_code >= 300 && $response_code < 400) {
+
+		&HTTPError
+		("bad request: \"$request\": $response_code ",
+		"$response_string");
+	}
+
+	($response_code, $response_string);
+}
+
+
+
+
+
+
+
+
+
+sub FormatData {
+
+
+	if (defined $group) {
+
+		if (defined $article) {
+
+			# do some fancy formatting...later
+			#
+
+			$curr_url = "$protocol:/$group";
+
+			# insert urls to the previous and next articles,
+			# if they exist.
+			#
+			$NEWDATA .= "<title>ARTICLE $article " .
+				"in $group</title>\n";
+
+			$NEWDATA .= " [<a href=\"$curr_url\">" .
+				"<b> GROUP </b></a>] ";
+
+			$NEWDATA .= " [<a href=\"$curr_url/$prev_article\">" .
+				"<b> PREV </b></a>] " 
+				if (defined $prev_article);
+
+
+			$NEWDATA .= " [<a href=\"$curr_url/$next_article\">" .
+				"<b> NEXT </b></a>] "
+				if (defined $next_article);
+
+			$NEWDATA .= "\n\n";
+
+			# format the article itself
+			#
+			$NEWDATA .= "<pre>\n" . $DATA . "\n</pre>\n";
+
+		} else {
+
+			$curr_url = "$protocol:$filename";
+
+
+			&FilterArticles()	if ($opt_r);
+
+			&SortBySubject()	if ($opt_s);
+
+
+			$NEWDATA .= "<title>NEWSGROUP $group</title>";
+
+			$NEWDATA .= " [<a href=\"$protocol:/\">" .
+				"<b> ALL GROUPS </b></a>]\n";
+
+			$NEWDATA .= "<h1>$group</h1>\n";
+
+			$NEWDATA .= "<i>sorted by subject</i>\n"  if ($opt_s);
+
+			$NEWDATA .= "<ul>\n";
+
+			
+			@data_array = split (/\n/, $DATA);
+
+			foreach $l (@data_array) {
+
+				($article_id, $article_subj) = 
+					split (' ', $l, 2);
+
+
+				$NEWDATA .= 
+
+# uncomment the next line and comment out the line following
+# if you want the article subjects to be the links
+#
+#					"<li> $article_id ".
+					"<li> ". 
+
+					"<a href=\"$curr_url/$article_id\">".
+
+# uncomment the next line and comment out the line following
+# if you want the article subjects to be the links
+#
+#					"$article_subj</a>\n";
+					"$article_id</a> $article_subj\n";
+
+			}
+
+			$NEWDATA .= "</ul>\n";
+		}
+
+	} else {
+
+		$curr_url = "$protocol:";
+		
+		# give the page a heading
+		#
+		$NEWDATA .= "<title>NEWS from $hostname</title>\n";
+		$NEWDATA .= "<h2>NEWS <b>from</b> <i>$hostname</i></h2>\n";
+
+		# start the listing of groups
+		#
+		$NEWDATA .= "<ul>\n";
+
+		@data_array = split (/\n/, $DATA);
+
+		foreach $l (sort @data_array) {
+
+			($group_name, $group_n1, $group_n2, $group_flag) = 
+				split (' ', $l, 4);
+
+
+			$NEWDATA .= 
+				"<li> ". 
+				"<a href=\"$curr_url/$group_name\">".
+				"$group_name</a>\n";
+
+		}
+
+		$NEWDATA .= "</ul>\n";
+	}
+
+	$DATA = $NEWDATA if (defined $NEWDATA);
+}
+
+
+
+
+
+
+
+#
+# an article filter
+#
+
+sub
+FilterArticles {
+
+	local (@list, %article_array, $l, $id, $range, $low, 
+		$high, $entry, $FILTER_DATA);
+
+	@list = split (',', $history{$group});
+
+	foreach $l (split (/\n/, $DATA)) {
+
+		($id, $entry) = split (' ', $l, 2);
+		$article_array{$id} = $entry;
+	}
+
+	while ($range = shift (@list)) {
+
+		($low, $high) = split ('-', $range);
+		$high = $low if ($high eq "");
+
+		for ($id = $low; $id <= $high; $id++) {
+
+			if ($article_array{$id} ne "") {
+
+				$article_array{$id} = "";
+			}
+		}
+	}
+	foreach $id (sort keys (%article_array)) {
+
+		$FILTER_DATA .= "$id $article_array{$id}\n"
+			if ($article_array{$id} ne "");
+	}
+	$DATA = $FILTER_DATA;
+
+	0;
+}
+
+
+
+
+
+
+
+
+
+
+#
+# a simple article sorter
+#
+
+sub
+SortBySubject {
+
+	local(@skeys, @data);
+	@data = split(/\n/, $DATA);
+	foreach $l (@data) {
+
+		chop ($l);
+
+		($id, $subject) = split(' ', $l, 2);
+		$RE = "";
+		if ($subject =~ s/^(Re: )//) {
+			$RE = $1;
+		}
+
+		push(@skeys, $subject);
+	}
+
+	sub byskeys { 
+		if($skeys[$a] eq $skeys[$b]) { $a <=> $b; }
+		else { $skeys[$a] cmp $skeys[$b]; }
+	}
+
+	@sortdata = @data[sort byskeys $[..$#data];
+
+
+	$DATA = join("\n", @sortdata);
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+#
+# OUTPUT routine
+#
+sub ReturnHTTPData {
+
+	# format of output:
+	#
+	# HTTP/1.0 200 OK
+	# Content-type: text/html
+	# Content-length: 12345
+	#
+	# DATA
+	#
+
+	$content_length = length ($DATA);
+
+	print STDOUT "HTTP/$version $return_code $return_string\n";
+	print STDOUT "Content-type: $content_type\n";
+	print STDOUT "Content-length: $content_length\n";
+	print STDOUT "\n";
+
+	print STDOUT "$DATA";
+
+	print STDOUT "\n";
+
+	0;
+}
+
+
+
+
+
+sub Usage {
+	
+	print STDERR "Usage:\t$prog [-n <nntp server>]\n\n";
+	print STDERR "\tThis PERL filter accepts specialized\n";
+	print STDERR "\tHTTP requests from Chimera on stdin\n";
+	print STDERR "\tand converts them into NNTP requests\n";
+	print STDERR "\tto the local server. The program then\n";
+	print STDERR "\tformats the results into an HTTP response\n";
+	print STDERR "\tsent to stdout, and exits.\n";
+
+	exit 1;
+}
+
+
+
+
+# a little routine that translates a 
+# machine name into its address
+#
+
+sub getaddress {
+
+	local($host) = @_;
+	local(@ary);
+	@ary = gethostbyname($host);
+	return(unpack("C4",$ary[4]));
+}
+
+
+
+
+sub HTTPError {
+
+	local(@string) = @_;
+	local($message); 
+
+	$message .= "\n" .
+		"<h1>ERROR</h1>\n" .
+		"<b>nntp:</b> " .
+		join ('', @string) . 
+		"\n\n";
+
+	$content_length = length($message);
+
+	print STDOUT "HTTP/$version $return_code  $return_string\n";
+	print STDOUT "Content-type: text/html\n";
+	print STDOUT "Content-length: $content_length\n";
+
+	print STDOUT "$message";
+
+	exit 1;
+}
+
+
+
+

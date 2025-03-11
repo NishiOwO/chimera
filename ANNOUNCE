@@ -1,0 +1,26 @@
+This is an announcement for chimera 1.63.  Chimera is a X-based 
+World-Wide Web browser for UNIX machines.  Chimera uses the
+Athena widget set and a modified form of the NCSA HTML widget.
+
+Chimera supports forms, inline images, TERM, SOCKS, proxy servers,
+Gopher, FTP, HTTP, and local file accesses.
+
+Chimera can be extended using external programs.
+New protocols can easily be added and alternate image formats can be used
+for inline images (e.g. postscript, JPEG, ...).
+
+It is available for anonymous ftp at ftp.cs.unlv.edu in the
+directory /pub/chimera.  Check out the URL
+
+http://www.unlv.edu/chimera/
+
+for a partial list of mirrors and other information.
+
+The author has compiled and run chimera on
+
+Sun Sparc SunOS 4.1.x
+IBM RS/6000 AIX 3.2.5
+DEC Alpha OSF/1 V3.0
+Linux
+
+It should run on anything with X11R[3-6], imake, and a C compiler.

@@ -1,0 +1,35 @@
+#!/bin/sh
+# pstoppm
+# pstoppm converts postscript to ppm using ghostscript
+# Benno Blumenthal benno@ldgo.columbia.edu
+#
+# modified very very little by John Kilburg john@cs.unlv.edu
+# basically I turned it into pstopxm.
+#
+# $1 = should be one of pbmraw, pgmraw, ppmraw
+# $2 == postscript file
+#
+# first we pull the bounding box comment out of the file
+# if there is no bounding box then GEOM will be empty, if there is one
+# it will be lx###ly###ux###uy###.
+
+GEOM=`sed -n -e '/^%%BoundingBox: *[0-9][0-9]* *[0-9]* *[0-9]* *[0-9]*/s/%%BoundingBox: *\([0-9]*\) *\([0-9]*\) *\([0-9]*\) *\([0-9]*\)/lx\1ly\2ux\3uy\4/p' $2`
+if [ .$GEOM = "." ]; then
+# if no bounding box, we just feed it to gs
+(cat $2; echo "showpage") | gs -q -dSAFER -dNOPAUSE -sDEVICE=$1 -sOutputFile=- -
+else
+# there was a bounding box
+# pull off each number
+lx=`expr $GEOM : "lx\([0-9]*\)"`
+ly=`expr $GEOM : ".*ly\([0-9]*\)"`
+ux=`expr $GEOM : ".*ux\([0-9]*\)"`
+uy=`expr $GEOM : ".*uy\([0-9]*\)"`
+# compute the size
+ysize=`expr $uy - $ly`
+xsize=`expr $ux - $lx`
+GEOMC=-g${xsize}x${ysize}
+# send the plot to gs shifted and the geometry shrunk to fit.
+(echo "-${lx} -${ly} translate" ; cat $2; echo "showpage") | gs -q -dSAFER -dNOPAUSE -sDEVICE=$1 $GEOMC -sOutputFile=- -
+fi
+
+# eof
