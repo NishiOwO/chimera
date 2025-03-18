@@ -47,6 +47,7 @@ static MIMEType mhlist[] =
   { "image/jpeg", "jpg" },
   { "image/jpeg", "jpeg" },
   { "image/tiff", "tiff" },
+  { "image/png", "png" },
   { "image/x-fits", "fit" },
   { "image/x-fits", "fits" },
   { "image/x-fits", "fts" },

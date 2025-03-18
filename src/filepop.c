@@ -358,11 +358,11 @@ void (*dfunc)();
 				NULL, 0);
 
   save = XtCreateManagedWidget("save",
-			       scrollingTextWidgetClass, form,
+			       asciiTextWidgetClass, form,
 			       NULL, 0);
   XtSetArg(args[0], XtNfromHoriz, label);
   XtSetValues(save, args, 1);
-  save = XtNameToWidget(save, "text");
+  /*save = XtNameToWidget(save, "text");*/
   if (sdef == NULL) XtSetArg(args[0], XtNstring, "");
   else XtSetArg(args[0], XtNstring, sdef);
   XtSetArg(args[1], XtNeditType, XawtextEdit);
@@ -384,11 +384,11 @@ void (*dfunc)();
 				NULL, 0);
 
   print = XtCreateManagedWidget("print",
-				scrollingTextWidgetClass, form,
+				asciiTextWidgetClass, form,
 				NULL, 0);
   XtSetArg(args[0], XtNfromHoriz, label);
   XtSetValues(print, args, 1);
-  print = XtNameToWidget(print, "text");
+  /*print = XtNameToWidget(print, "text");*/
   if (pdef == NULL) XtSetArg(args[0], XtNstring, "");
   else XtSetArg(args[0], XtNstring, pdef);
   XtSetArg(args[1], XtNeditType, XawtextEdit);
@@ -410,11 +410,11 @@ void (*dfunc)();
 				NULL, 0);
 
   mail = XtCreateManagedWidget("mail",
-				scrollingTextWidgetClass, form,
+				asciiTextWidgetClass, form,
 				NULL, 0);
   XtSetArg(args[0], XtNfromHoriz, label);
   XtSetValues(mail, args, 1);
-  mail = XtNameToWidget(mail, "text");
+  /*mail = XtNameToWidget(mail, "text");*/
   if (mdef == NULL) XtSetArg(args[0], XtNstring, "");
   else XtSetArg(args[0], XtNstring, mdef);
   XtSetArg(args[1], XtNeditType, XawtextEdit);

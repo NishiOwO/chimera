@@ -128,7 +128,7 @@ String *params;
 Cardinal *num_params;
 {
   XawTextPosition begin, end;
-  
+
   XawTextGetSelectionPos(w, &begin, &end);
   if (begin == end)
   {
@@ -203,7 +203,7 @@ int inv; /* if 1 then text is invisible */
 				NULL, 0);
 
   field = XtCreateManagedWidget("field",
-				scrollingTextWidgetClass, form,
+				asciiTextWidgetClass, form,
 				NULL, 0);
 
   if (inv)
@@ -214,7 +214,7 @@ int inv; /* if 1 then text is invisible */
 
   XtSetArg(args[0], XtNfromVert, label);
   XtSetValues(field, args, 1);
-  field = XtNameToWidget(field, "text");
+/*  field = XtNameToWidget(field, "text");*/
   if (sdef == NULL) XtSetArg(args[0], XtNstring, "");
   else XtSetArg(args[0], XtNstring, sdef);
   XtSetArg(args[1], XtNeditType, XawtextEdit);

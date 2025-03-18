@@ -3,7 +3,9 @@
 #
 
 # Conversions for inline images
-inline application/postscript image/gif pstopxm gif8 %s
+inline application/postscript image/gif pstopnm %s | pnmquant 256 | pamtogif
+inline image/png image/gif pngtopnm %s | pnmquant 256 | pamtogif
+inline image/jpeg image/gif jpegtopnm %s | pnmquant 256 | pamtogif
 
 # just do a download
 ftp application/x-compress * none

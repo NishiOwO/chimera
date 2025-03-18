@@ -142,7 +142,7 @@ int s;
   t = ReadBuffer(s, &tlen, 8, 8);
   if (t == NULL) return(NULL);
   
-  if (strncmp(t, "HTTP/1.0", 8) != 0)
+  if (strncmp(t, "HTTP/1.0", 8) != 0 && strncmp(t, "HTTP/1.1", 8) != 0)
   {
     char *x;
     int xlen;

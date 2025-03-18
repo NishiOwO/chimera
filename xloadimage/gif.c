@@ -153,7 +153,7 @@ static int gifin_open_file()
   gifin_g_pixel_bits = (buf[4] & 0x07) + 1;
   gifin_bg_color     = buf[5];
 
-  if (buf[6] != 0)
+  if (buf[6] != 0) 
     return GIFIN_ERR_BAD_SD;
 
   /* load global colormap */
@@ -549,6 +549,8 @@ RGBColor *bg;
 
   if ((gifin_open_file() != GIFIN_SUCCESS) || /* read GIF header */
       (gifin_open_image() != GIFIN_SUCCESS)) {  /* read image header */
+    file_open  = 0;
+    image_open = 0;
     return(NULL);
   }
   image = newRGBImage(gifin_img_width, gifin_img_height, (gifin_l_cmap_flag ?

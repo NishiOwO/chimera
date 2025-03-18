@@ -513,7 +513,14 @@ MIMEField *m;
    */
   if (mystrncmp("content-type", field, 12) == 0)
   {
+    int i;
     d->content = alloc_string(data);
+    for(i = 0; d->content[i] != 0; i++){
+	    if(d->content[i] == ';'){
+		    d->content[i] = 0;
+		    break;
+	    }
+    }
   }
   else if (mystrncmp("x-pcontent-type", field, 15) == 0)
   {
