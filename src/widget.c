@@ -178,9 +178,8 @@ HTMLRoot *r;
 			  NULL, ZERO);
     
     r->titledisplay = XtCreateManagedWidget("titledisplay",
-					    scrollingTextWidgetClass, form,
+					    asciiTextWidgetClass, form,
 					    NULL, ZERO);
-    r->titledisplay = XtNameToWidget(r->titledisplay, "text");
   }
   else
   {
@@ -201,9 +200,8 @@ HTMLRoot *r;
 			  NULL, ZERO);
     
     r->urldisplay = XtCreateManagedWidget("urldisplay",
-					  scrollingTextWidgetClass, form,
+					  asciiTextWidgetClass, form,
 					  NULL, ZERO);
-    r->urldisplay = XtNameToWidget(r->urldisplay, "text");
   }
   else
   {
